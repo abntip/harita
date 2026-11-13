@@ -1,1 +1,2027 @@
-Hello World!
+<!DOCTYPE html>
+<html lang="tr" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Topografik ve Segmental Anatomi Atlası</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: { 850: '#141c2e', 950: '#090d16' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body {
+      overscroll-behavior: none;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .node-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    }
+    .bg-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    [data-node-id], .vertebra-line-handle {
+      -webkit-touch-callout: none !important;
+      touch-action: none !important;
+    }
+    .lineage-active {
+      outline: 2px dashed #f43f5e !important;
+      outline-offset: 4px;
+      box-shadow: 0 0 18px rgba(244, 63, 94, 0.45) !important;
+    }
+    .lineage-child {
+      outline: 2px solid #fb7185 !important;
+      outline-offset: 2px;
+    }
+    .foramen-ring {
+      fill: #090d16;
+      stroke: #94a3b8;
+      stroke-width: 2.2;
+      stroke-dasharray: 3 2;
+      filter: drop-shadow(0 0 4px rgba(148, 163, 184, 0.5));
+    }
+    .foramen-label {
+      fill: #cbd5e1;
+      font-size: 9px;
+      font-family: ui-monospace, monospace;
+      font-weight: 600;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -20; }
+    }
+    .relation-path {
+      stroke-dasharray: 6 4;
+      animation: dashMove 2.5s linear infinite;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.6); border-radius: 3px; }
+  </style>
+</head>
+<body class="h-full w-full bg-slate-950 text-slate-100 font-sans overflow-hidden flex flex-col">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <header id="mainHeader" class="h-14 bg-slate-900/95 border-b border-slate-800/80 px-3 md:px-5 flex items-center justify-between z-30 shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 via-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-rose-600/20">
+        <i class="ph-bold ph-compass text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-xs md:text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+          Topografik Anatomi Atlası
+          <span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.2 rounded font-mono">v4.0</span>
+        </h1>
+        <p class="text-[10px] text-slate-400 hidden sm:block">Segmental Vasküler Gövde ve Vertebra Hizalama Motoru</p>
+      </div>
+    </div>
+
+    <!-- Center Search Bar -->
+    <div class="relative w-36 sm:w-64 max-w-xs">
+      <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+      <input type="text" id="searchInput" placeholder="Damar / Sinir / Segment ara..." 
+             class="w-full pl-7 pr-7 py-1 text-xs rounded-lg bg-slate-800 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500">
+      <button id="clearSearchBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+        <i class="ph-bold ph-x"></i>
+      </button>
+      <div id="searchDropdown" class="hidden absolute top-full left-0 w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-h-56 overflow-y-auto z-50 text-xs py-1"></div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-1.5">
+      <div class="flex items-center bg-slate-800/80 rounded-lg p-0.5 border border-slate-700/80">
+        <button id="undoBtn" title="Geri Al (Ctrl+Z)" class="p-1.5 text-slate-300 hover:text-white disabled:opacity-30 rounded hover:bg-slate-700 transition">
+          <i class="ph-bold ph-arrow-u-up-left text-sm"></i>
+        </button>
+        <button id="redoBtn" title="İleri Al (Ctrl+Y)" class="p-1.5 text-slate-300 hover:text-white disabled:opacity-30 rounded hover:bg-slate-700 transition">
+          <i class="ph-bold ph-arrow-u-up-right text-sm"></i>
+        </button>
+      </div>
+
+      <button id="openRoadmapBtn" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-300 text-xs px-2 flex items-center gap-1 transition">
+        <i class="ph-bold ph-notebook text-sm"></i>
+        <span class="hidden md:inline">Notlar</span>
+      </button>
+
+      <button id="openDataModalBtn" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-200 text-xs px-2 flex items-center gap-1 transition">
+        <i class="ph-bold ph-arrows-down-up text-sm"></i>
+        <span class="hidden md:inline">Veri</span>
+      </button>
+
+      <button id="resetViewBtn" title="Merkeze Al" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-200 transition">
+        <i class="ph-bold ph-crosshair text-sm"></i>
+      </button>
+
+      <button id="fullscreenToggleBtn" class="p-1.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded-lg transition">
+        <i id="fullscreenIcon" class="ph-bold ph-arrows-out text-sm"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= SUB-BAR / MODLAR & KATMAN TOGGLE'LARI ================= -->
+  <div id="subHeader" class="h-11 bg-slate-900/80 border-b border-slate-800 px-3 flex items-center justify-between z-20 shrink-0 text-xs">
+    
+    <!-- Left: Layout Switcher & Main Modes -->
+    <div class="flex items-center gap-2 overflow-x-auto py-1">
+      <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+        <button id="layoutTopographicBtn" class="flex items-center gap-1 px-2.5 py-1 rounded-md text-white font-medium bg-rose-600 shadow-sm transition">
+          <i class="ph-bold ph-compass"></i>
+          <span>Topografik</span>
+        </button>
+        <button id="layoutSchematicBtn" class="flex items-center gap-1 px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200 transition">
+          <i class="ph-bold ph-tree-structure"></i>
+          <span>Şematik</span>
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-slate-800 mx-1"></div>
+
+      <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+        <button id="modeViewBtn" class="flex items-center gap-1 px-2 py-1 rounded text-white bg-slate-800 font-medium transition">
+          <i class="ph-bold ph-eye"></i> Gözlem
+        </button>
+        <button id="modeMoveBtn" class="flex items-center gap-1 px-2 py-1 rounded text-slate-400 hover:text-white transition">
+          <i class="ph-bold ph-arrows-out-cardinal"></i> Taşı
+        </button>
+        <button id="modeEditBtn" class="flex items-center gap-1 px-2 py-1 rounded text-slate-400 hover:text-white transition">
+          <i class="ph-bold ph-pencil-simple-line"></i> Düzenle
+        </button>
+      </div>
+
+      <div id="moveControlsContainer" class="hidden flex items-center gap-2">
+        <label class="flex items-center gap-1 bg-slate-850 px-2 py-0.5 rounded border border-slate-700/80 text-[11px] text-slate-300 cursor-pointer">
+          <input type="checkbox" id="snapGridCheckbox" class="rounded border-slate-600 text-rose-600 focus:ring-0">
+          <span>Hizala (20px)</span>
+        </label>
+        <label class="flex items-center gap-1 bg-slate-850 px-2 py-0.5 rounded border border-slate-700/80 text-[11px] text-slate-300 cursor-pointer">
+          <input type="checkbox" id="autoSubtreeCheckbox" class="rounded border-slate-600 text-rose-600 focus:ring-0">
+          <span>Otomatik Dalı Taşı</span>
+        </label>
+      </div>
+
+      <button id="addNewNodeBtn" class="hidden px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-medium text-xs flex items-center gap-1 transition">
+        <i class="ph-bold ph-plus"></i> Yeni Yapı
+      </button>
+    </div>
+
+    <!-- Right: Anatomik Katman Toggle'ları -->
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <!-- Segmentleri Aç/Kapat -->
+      <button id="toggleSegmentsBtn" class="px-2.5 py-1 rounded-lg border border-amber-600/60 bg-amber-950/60 text-amber-300 hover:text-white flex items-center gap-1.5 text-[11px] font-medium transition shadow-sm" title="ECA ve Maxillaris gibi gövdeleri fiziksel segment düğümlerine böler">
+        <i class="ph-bold ph-git-fork"></i>
+        <span>Segment Gövdeleri</span>
+      </button>
+
+      <!-- Komşuluklar (SADECE TOPOGRAFİKTE) -->
+      <button id="toggleRelationsBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-purple-950/40 text-purple-300 hover:text-white flex items-center gap-1 text-[11px] transition">
+        <i class="ph-bold ph-git-diff"></i>
+        <span class="hidden md:inline">Komşuluklar</span>
+      </button>
+
+      <!-- Vertebralar (SADECE TOPOGRAFİKTE) -->
+      <button id="toggleAlignmentBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-sky-950/40 text-sky-300 hover:text-white flex items-center gap-1 text-[11px] transition">
+        <i class="ph-bold ph-ruler"></i>
+        <span class="hidden md:inline">Vertebralar</span>
+      </button>
+
+      <!-- Vertebra Taşı Aracı -->
+      <button id="btnVertebraMoveTool" class="px-2 py-1 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1 text-[11px] transition">
+        <i class="ph-bold ph-arrows-down-up"></i>
+        <span class="hidden lg:inline">Vertebra Taşı</span>
+      </button>
+
+      <!-- Kompakt Görünüm -->
+      <button id="toggleCompactBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-slate-800 text-emerald-300 hover:text-white flex items-center gap-1 text-[11px] transition">
+        <i class="ph-bold ph-rows"></i>
+        <span class="hidden lg:inline">Kompakt</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= FLOATING VERTEBRA TAŞIMA ÇUBUĞU ================= -->
+  <div id="vertebraToolBar" class="hidden fixed top-28 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 border border-sky-500/60 shadow-2xl rounded-2xl px-4 py-2.5 flex items-center gap-3 backdrop-blur-md">
+    <div class="flex items-center gap-1.5 text-xs text-sky-300 font-medium">
+      <i class="ph-bold ph-arrows-down-up text-base"></i>
+      <span id="vertebraToolStatus">Tekli Taşı: Çizgiye dokunup Y ekseninde kaydırın</span>
+    </div>
+    <div class="h-4 w-px bg-slate-700"></div>
+    <button id="btnVertebraMultiSelect" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded text-xs font-medium border border-slate-700 transition">
+      Çoklu Seç
+    </button>
+    <button id="btnVertebraGroupLock" class="hidden px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded text-xs font-medium transition">
+      Birlikte Kaydır
+    </button>
+    <button id="btnVertebraToolDone" class="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-medium shadow transition">
+      Bitti
+    </button>
+  </div>
+
+  <!-- ================= MAIN CANVAS CONTAINER ================= -->
+  <div id="viewport" class="relative flex-1 w-full h-full overflow-hidden bg-slate-950 bg-grid cursor-grab active:cursor-grabbing select-none">
+    
+    <div id="world" class="absolute origin-top-left will-change-transform" style="transform: translate(0px, 0px) scale(1);">
+      
+      <!-- 1. EN ARKA KATMAN: VERTEBRALAR & AXIS MEDIANUM (z-0) -->
+      <div id="alignmentBackgroundLayer" class="absolute left-0 top-0 pointer-events-auto z-0"></div>
+
+      <!-- 2. ORTA KATMAN: SVG BAĞLANTILARI, GEÇİTLER, KALIN GÖVDE OKLARI (z-10) -->
+      <svg id="connectionsSvg" class="absolute overflow-visible pointer-events-none z-10" style="left: 0; top: 0; width: 1px; height: 1px;">
+        <defs>
+          <marker id="arrow-artery" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#ef4444" />
+          </marker>
+          <marker id="arrow-trunk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+          </marker>
+          <marker id="arrow-vein" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#3b82f6" />
+          </marker>
+          <marker id="arrow-nerve" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#facc15" />
+          </marker>
+          <marker id="arrow-lineage" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#f43f5e" />
+          </marker>
+        </defs>
+
+        <g id="svgMainTrunksGroup"></g>
+        <g id="svgPathsGroup"></g>
+        <g id="svgForaminaRingsGroup"></g>
+        <g id="svgRelationsGroup"></g>
+      </svg>
+
+      <!-- 3. EN ÜST KATMAN: ANATOMİK DÜĞÜMLER (z-20) -->
+      <div id="nodesContainer" class="absolute left-0 top-0 z-20 pointer-events-auto"></div>
+
+    </div>
+
+    <!-- Floating Zoom Controls -->
+    <div class="absolute bottom-5 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/85 backdrop-blur-md p-1.5 rounded-xl border border-slate-800 shadow-2xl">
+      <button id="zoomInBtn" class="w-8 h-8 flex items-center justify-center text-slate-200 hover:text-white hover:bg-slate-800 rounded-lg transition">
+        <i class="ph-bold ph-plus text-base"></i>
+      </button>
+      <div class="h-px bg-slate-800 mx-1"></div>
+      <button id="zoomResetFloatingBtn" class="w-8 h-8 flex items-center justify-center text-[10px] font-mono text-slate-300 hover:text-white rounded-lg transition">
+        100%
+      </button>
+      <div class="h-px bg-slate-800 mx-1"></div>
+      <button id="zoomOutBtn" class="w-8 h-8 flex items-center justify-center text-slate-200 hover:text-white hover:bg-slate-800 rounded-lg transition">
+        <i class="ph-bold ph-minus text-base"></i>
+      </button>
+    </div>
+
+    <!-- Sol Alt Pusula (SADECE TOPOGRAFİKTE GÖRÜNÜR) -->
+    <div id="topographicCompass" class="absolute bottom-5 left-4 z-20 flex flex-col gap-1 bg-slate-900/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-slate-800/80 text-[11px] text-slate-300 shadow-lg font-mono">
+      <div class="flex items-center gap-1.5 text-rose-400 font-bold">
+        <i class="ph-bold ph-arrow-up"></i> <span>KRANİYAL</span>
+      </div>
+      <div class="flex items-center justify-between text-[10px] text-slate-400 gap-4">
+        <span>← SAĞ (Dekster)</span>
+        <span>SOL (Sinister) →</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-sky-400 font-bold">
+        <i class="ph-bold ph-arrow-down"></i> <span>KAUDAL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DETAY DRAWER ================= -->
+  <div id="detailDrawer" class="fixed inset-y-0 right-0 w-full sm:w-[460px] bg-slate-900/95 backdrop-blur-xl border-l border-slate-800 shadow-2xl z-40 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-start justify-between">
+      <div class="flex items-center gap-2">
+        <span id="detailBadge" class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">
+          Kategori
+        </span>
+        <span id="detailRootsBadge" class="text-xs font-mono text-amber-400 bg-amber-950/40 border border-amber-800/50 px-2 py-0.5 rounded">
+          Hiza / Vertebra
+        </span>
+      </div>
+      <div class="flex items-center gap-1">
+        <button id="editFromDetailBtn" class="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition" title="Düzenle">
+          <i class="ph-bold ph-pencil-simple text-base"></i>
+        </button>
+        <button id="closeDetailBtn" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition">
+          <i class="ph-bold ph-x text-base"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+      <div>
+        <h2 id="detailTitle" class="text-lg font-bold text-white tracking-tight">Yapı Başlığı</h2>
+        <p id="detailLocation" class="text-slate-400 text-[11px] mt-0.5 flex items-center gap-1">
+          <i class="ph-bold ph-map-pin text-slate-500"></i> <span id="detailLocationText">-</span>
+        </p>
+      </div>
+
+      <div class="bg-slate-850 p-3 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1 mb-2">
+          <i class="ph-bold ph-arrow-bend-left-up text-rose-400"></i> Çıktığı / Ayrıldığı Kök
+        </span>
+        <div id="detailOriginsList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div class="bg-slate-850 p-3 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1 mb-2">
+          <i class="ph-bold ph-arrow-bend-right-down text-emerald-400"></i> Verdiği Terminal Dallar
+        </span>
+        <div id="detailDerivativesList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div class="bg-slate-850 p-3.5 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1 mb-2">
+          <i class="ph-bold ph-first-aid text-rose-400"></i> Klinik Notlar & Varyasyonlar
+        </span>
+        <div id="detailNotes" class="text-slate-300 leading-relaxed text-[12px] whitespace-pre-line"></div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 bg-slate-900">
+      <button id="focusNodeBtn" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium text-xs flex items-center justify-center gap-1.5 transition">
+        <i class="ph-bold ph-crosshair"></i>
+        <span>Haritada Odaklan</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= EDIT / CREATE NODE MODAL ================= -->
+  <div id="editModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
+        <h3 id="editModalHeaderTitle" class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="ph-bold ph-pencil-simple-line text-rose-400"></i> Yapıyı Düzenle
+        </h3>
+        <button id="closeEditModalBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="ph-bold ph-x text-base"></i>
+        </button>
+      </div>
+
+      <form id="editNodeForm" class="p-5 overflow-y-auto space-y-3.5 text-xs flex-1">
+        <input type="hidden" id="formNodeId">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">Damar / Sinir Adı *</label>
+            <input type="text" id="formLabel" required placeholder="ör: A. Carotis Externa"
+                   class="w-full px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">Sistem / Kategori</label>
+            <select id="formCategory" class="w-full px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500">
+              <option value="artery">Arteriyal Sistem</option>
+              <option value="vein">Venöz Sistem</option>
+              <option value="nerve_somatic">Somatik Sinir</option>
+              <option value="nerve_autonomic">Otonom Sinir</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">Vücut Tarafı (Asimetri)</label>
+            <select id="formSide" class="w-full px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500">
+              <option value="center">Orta Hat (Axis Medianum)</option>
+              <option value="left">Sol (Sinister)</option>
+              <option value="right">Sağ (Dekster)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">Hiza / Vertebra / Kök</label>
+            <input type="text" id="formRoots" placeholder="ör: C4 Bifurkasyon veya T4"
+                   class="w-full px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-medium">Topografik Konum / Trase</label>
+          <input type="text" id="formLocation" placeholder="ör: Trigonum caroticum içi"
+                 class="w-full px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500">
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-medium">Köken Aldığı Yapı (Öncül Damar/Kök)</label>
+          <div id="formOriginsContainer" class="p-2 bg-slate-850 border border-slate-800 rounded-lg max-h-28 overflow-y-auto space-y-1"></div>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-medium">Klinik Notlar, İnnervasyon & Tuzaklar</label>
+          <textarea id="formNotes" rows="3" placeholder="Klinik ilişkiler..."
+                    class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-rose-500"></textarea>
+        </div>
+      </form>
+
+      <div class="px-5 py-3 border-t border-slate-800 bg-slate-850 flex items-center justify-between">
+        <button type="button" id="deleteNodeBtn" class="px-3 py-1.5 bg-rose-900/40 hover:bg-rose-900/80 border border-rose-700/60 text-rose-300 rounded-lg text-xs font-medium flex items-center gap-1 transition">
+          <i class="ph-bold ph-trash"></i> Sil
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="cancelEditBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition">
+            İptal
+          </button>
+          <button type="button" id="saveNodeBtn" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-medium shadow-md transition">
+            Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DATA MANAGEMENT MODAL ================= -->
+  <div id="dataModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white">Harita Veri Yönetimi</h3>
+        <button id="closeDataModalBtn" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-base"></i></button>
+      </div>
+      <div class="space-y-3">
+        <button id="exportJsonBtn" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium text-xs">
+          Mevcut Haritayı JSON Olarak İndir
+        </button>
+        <div>
+          <label class="block text-slate-400 text-xs mb-1">JSON Kodunu Yapıştırın:</label>
+          <textarea id="importPasteTextarea" rows="6" class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="parseReplaceBtn" class="w-full py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg text-xs font-medium">
+            Tamamen Değiştir (Replace)
+          </button>
+          <button id="parseMergeBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-medium">
+            Mevcutla Birleştir (Merge)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ROADMAP MODAL ================= -->
+  <div id="roadmapModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="font-bold text-sm text-white">Anatomi Not Defteri</h3>
+        <button id="closeRoadmapModalBtn" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-base"></i></button>
+      </div>
+      <textarea id="roadmapTextarea" rows="10" placeholder="Anatomi notları..." class="w-full p-2 bg-slate-950 border border-slate-800 rounded text-xs font-mono text-slate-200"></textarea>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-700 text-slate-100 px-4 py-2 rounded-xl shadow-2xl text-xs z-50 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center gap-2">
+    <i id="toastIcon" class="ph-bold ph-check text-emerald-400"></i>
+    <span id="toastMsg">İşlem tamamlandı</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT MOTORU ================= -->
+  <script>
+    /* -------------------------------------------------------------
+       1. VERTEBRA HİZALARI
+       ------------------------------------------------------------- */
+    let VERTEBRAL_LEVELS = [
+      { id: "c1_c2", label: "C1 - C2 (Atlas / Axis)", y: 160, desc: "A. Vertebralis Foramen Magnum Girişi" },
+      { id: "c4", label: "C4 (Cartilago Thyroidea)", y: 360, desc: "A. Carotis Communis Bifurkasyonu" },
+      { id: "c6", label: "C6 (Cartilago Cricoidea)", y: 540, desc: "A. Vertebralis Foramen Transversarium Seviyesi" },
+      { id: "t4_t5", label: "T4 - T5 (Angulus Sterni)", y: 800, desc: "Arcus Aortae Başlangıç ve Bitişi" },
+      { id: "t12", label: "T12 (Hiatus Aorticus)", y: 1160, desc: "Aorta Abdominalis Başlangıcı" },
+      { id: "l1", label: "L1 (Planum Transpyloricum)", y: 1340, desc: "A. Mesenterica Superior Çıkışı" },
+      { id: "l4", label: "L4 (Crista Iliaca)", y: 1560, desc: "Aorta Bifurkasyonu" }
+    ];
+
+    /* -------------------------------------------------------------
+       2. BAŞLANGIÇ TEMİZ TOPOGRAFİK VERİ SETİ
+       ------------------------------------------------------------- */
+    const DEFAULT_DATASET = [
+      {
+        id: "aorta_ascendens",
+        label: "Aorta Ascendens",
+        side: "center",
+        category: "artery",
+        roots: "T5 - T4",
+        location: "Perikard içi çıkış",
+        notes: "Sol ventrikülden başlar, yukarı-sağa doğru çapraz yükselerek T4'te Arcus Aortae'ye devam eder.",
+        origins: [],
+        topo: { x: 420, y: 920 },
+        schem: { x: 60, y: 380 }
+      },
+      {
+        id: "arcus_aortae",
+        label: "Arcus Aortae",
+        side: "center",
+        category: "artery",
+        roots: "T4 Seviyesi (Angulus Sterni)",
+        location: "Mediastinum superius",
+        notes: "Önden bakışta sağdan sola kavis çizer. Sağda Truncus brachiocephalicus, solda doğrudan CCA sinistra ve Subclavia sinistra ayrılır.",
+        origins: ["aorta_ascendens"],
+        topo: { x: 440, y: 780 },
+        schem: { x: 340, y: 380 }
+      },
+      {
+        id: "aorta_descendens_thoracica",
+        label: "Aorta Thoracica (Descendens)",
+        side: "left",
+        category: "artery",
+        roots: "T4 - T12 Seviyesi",
+        location: "Mediastinum posterius",
+        notes: "T4 alt kenarından başlar, aşağı inerek T12'de Hiatus Aorticus'tan geçer.",
+        origins: ["arcus_aortae"],
+        topo: { x: 460, y: 1100 },
+        schem: { x: 620, y: 560 }
+      },
+      {
+        id: "truncus_brachiocephalicus",
+        label: "Truncus Brachiocephalicus",
+        side: "right",
+        category: "artery",
+        roots: "Arcus 1. Dalı",
+        location: "Art. Sternoclavicularis Dextra arkası",
+        notes: "Yalnızca sağ tarafta bulunur! Sağ karotis ve subklavyanı ortak bir gövdeden çıkarır.",
+        origins: ["arcus_aortae"],
+        topo: { x: 260, y: 680 },
+        schem: { x: 620, y: 180 }
+      },
+      {
+        id: "cca_dextra",
+        label: "A. Carotis Communis Dextra",
+        side: "right",
+        category: "artery",
+        roots: "Truncus dalı / C4",
+        location: "Sağ Vagina Carotica",
+        notes: "Trigonum caroticum içinde C4 hizasına kadar yükselir.",
+        origins: ["truncus_brachiocephalicus"],
+        topo: { x: 240, y: 500 },
+        schem: { x: 920, y: 120 }
+      },
+      {
+        id: "a_subclavia_dextra",
+        label: "A. Subclavia Dextra",
+        side: "right",
+        category: "artery",
+        roots: "Truncus dalı",
+        location: "Sağ Spatium Interscalenum",
+        notes: "M. scalenus anterior arkasından sağ kola yönelir.",
+        origins: ["truncus_brachiocephalicus"],
+        topo: { x: 80, y: 620 },
+        schem: { x: 920, y: 260 }
+      },
+      {
+        id: "cca_sinistra",
+        label: "A. Carotis Communis Sinistra",
+        side: "left",
+        category: "artery",
+        roots: "Arcus doğrudan 2. dalı",
+        location: "Sol Vagina Carotica",
+        notes: "Doğrudan arkustan çıktığı için sağdakine göre 2.5 cm daha uzundur.",
+        origins: ["arcus_aortae"],
+        topo: { x: 580, y: 500 },
+        schem: { x: 620, y: 380 }
+      },
+      {
+        id: "a_subclavia_sinistra",
+        label: "A. Subclavia Sinistra",
+        side: "left",
+        category: "artery",
+        roots: "Arcus doğrudan 3. dalı",
+        location: "Sol Spatium Interscalenum",
+        notes: "Mediastinum superius derinliğinden kavisle sol kola geçer.",
+        origins: ["arcus_aortae"],
+        topo: { x: 740, y: 620 },
+        schem: { x: 620, y: 480 }
+      },
+      {
+        id: "eca_sinistra",
+        label: "A. Carotis Externa (ECA)",
+        side: "left",
+        category: "artery",
+        roots: "C4 Seviyesi",
+        location: "Trigonum caroticum → Parotis",
+        notes: "Karotis bifurkasyonundan başlar, parotis lojunda terminal dallarına ayrılır.",
+        origins: ["cca_sinistra"],
+        topo: { x: 660, y: 360 },
+        schem: { x: 920, y: 380 },
+        segmentedIds: ["eca_seg_trigonum", "eca_seg_parotid"]
+      },
+      {
+        id: "eca_seg_trigonum",
+        label: "ECA (1. Trigonum Caroticum Segmenti)",
+        side: "left",
+        category: "artery",
+        roots: "C4 - C3 Seviyesi (Boyun Alt Hiza)",
+        location: "Trigonum caroticum içi (Aşağıda)",
+        notes: "ECA'nın boyun ön üçgenindeki başlangıç segmentidir. Ön dallar buradan ayrılır.",
+        origins: ["cca_sinistra"],
+        topo: { x: 660, y: 410 },
+        schem: { x: 920, y: 340 },
+        isSegmentNode: true,
+        parentStemId: "eca_sinistra"
+      },
+      {
+        id: "eca_seg_parotid",
+        label: "ECA (2. Parotis İçi / Terminal Segment)",
+        side: "left",
+        category: "artery",
+        roots: "C2 - Angulus Mandibulae (Yukarıda)",
+        location: "Glandula parotidea derinliği (Yukarıda)",
+        notes: "Trigonum segmentinin yukarıya doğru devamıdır. Terminal dallar buradan ayrılır.",
+        origins: ["eca_seg_trigonum"],
+        isTrunkContinuation: true,
+        topo: { x: 660, y: 270 },
+        schem: { x: 920, y: 420 },
+        isSegmentNode: true,
+        parentStemId: "eca_sinistra"
+      },
+      {
+        id: "a_thyroidea_superior",
+        label: "A. Thyroidea Superior",
+        side: "left",
+        category: "artery",
+        roots: "C4 (ECA 1. dalı)",
+        location: "Trigonum caroticum → Tiroid Üst Kutup",
+        notes: "ECA'nın ilk dalıdır. Öne-aşağı doğru kıvrılarak tiroid bezinin üst kutbuna ulaşır.",
+        origins: ["eca_seg_trigonum"],
+        topo: { x: 840, y: 450 },
+        schem: { x: 1220, y: 280 }
+      },
+      {
+        id: "a_lingualis",
+        label: "A. Lingualis",
+        side: "left",
+        category: "artery",
+        roots: "C3 Seviyesi",
+        location: "Cornu majus ossis hyoidei üzeri",
+        notes: "Trigonum caroticum'dan ayrılıp hyoid kemiğin üzerinden dil kaslarına girer.",
+        origins: ["eca_seg_trigonum"],
+        topo: { x: 840, y: 390 },
+        schem: { x: 1220, y: 340 }
+      },
+      {
+        id: "a_facialis",
+        label: "A. Facialis",
+        side: "left",
+        category: "artery",
+        roots: "C3 Seviyesi",
+        location: "Trigonum submandibulare → Yüz",
+        notes: "Mandibula alt kenarını aşarak yüze geçer.",
+        origins: ["eca_seg_trigonum"],
+        topo: { x: 840, y: 330 },
+        schem: { x: 1220, y: 400 }
+      },
+      {
+        id: "a_temporalis_superficialis",
+        label: "A. Temporalis Superficialis",
+        side: "left",
+        category: "artery",
+        roots: "Collum Mandibulae Hizası",
+        location: "Tragus önü, temporal bölge",
+        notes: "Parotis bezi içinde ECA'nın yukarı devam eden terminal dalıdır.",
+        origins: ["eca_seg_parotid"],
+        topo: { x: 840, y: 190 },
+        schem: { x: 1220, y: 460 }
+      },
+      {
+        id: "a_maxillaris_sinistra",
+        label: "A. Maxillaris",
+        side: "left",
+        category: "artery",
+        roots: "Collum Mandibulae Hizası",
+        location: "Fossa Infratemporalis → Fossa Pterygopalatina",
+        notes: "Dıştan içe (mediale/derine) doğru girer.",
+        origins: ["eca_seg_parotid"],
+        topo: { x: 840, y: 260 },
+        schem: { x: 1220, y: 520 }
+      },
+      {
+        id: "a_carotis_interna_sinistra",
+        label: "A. Carotis Interna (ICA)",
+        side: "left",
+        category: "artery",
+        roots: "C4 Seviyesi",
+        location: "Kafa tabanı → Canalis Caroticus",
+        notes: "Boyunda dal vermeden kafa tabanına yükselir.",
+        origins: ["cca_sinistra"],
+        topo: { x: 540, y: 240 },
+        schem: { x: 920, y: 580 }
+      },
+      {
+        id: "ijv_sinistra",
+        label: "V. Jugularis Interna (IJV)",
+        side: "left",
+        category: "vein",
+        roots: "Foramen Jugulare Çıkışı",
+        location: "Vagina Carotica'da arterin lateralinde",
+        notes: "CCA ve ICA'nın lateralinde seyreder.",
+        origins: [],
+        topo: { x: 740, y: 420 },
+        schem: { x: 920, y: 680 }
+      },
+      {
+        id: "n_vagus_sinister",
+        label: "Nervus Vagus (CN X)",
+        side: "left",
+        category: "nerve_autonomic",
+        roots: "Foramen Jugulare",
+        location: "Vagina Carotica arka oluğu",
+        notes: "Karotis kılıfının arkasında uzanır.",
+        origins: [],
+        topo: { x: 620, y: 440 },
+        schem: { x: 920, y: 780 }
+      }
+    ];
+
+    const TOPOGRAPHIC_RELATIONS = [
+      { id: "rel_1", source: "cca_sinistra", target: "ijv_sinistra", label: "Vagina Carotica Komşuluğu" },
+      { id: "rel_2", source: "n_vagus_sinister", target: "cca_sinistra", label: "Posterior Oluk İlişkisi" },
+      { id: "rel_3", source: "n_vagus_sinister", target: "arcus_aortae", label: "N. Laryngeus Recurrens Arkusu Çaprazlar" }
+    ];
+
+    /* -------------------------------------------------------------
+       3. UYGULAMA DURUMU (STATE)
+       ------------------------------------------------------------- */
+    let state = {
+      nodes: [],
+      layout: "topographic",
+      mode: "view",
+      selectedNodeId: null,
+
+      showSegments: true,
+      showRelations: true,
+      showAlignment: true,
+      compactView: false,
+
+      snapToGrid: false,
+      autoSubtreeMove: false,
+      gridStep: 20,
+
+      lockedSubtreeRootId: null,
+      subtreeNodeIds: new Set(),
+
+      vertebraMoveActive: false,
+      vertebraSelectMode: false,
+      selectedVertebraIds: new Set(),
+      isDraggingVertebra: false,
+      activeDragVertebraId: null,
+      vertebraDragStartY: 0,
+      vertebraStartPositions: new Map(),
+
+      transform: { x: 80, y: 30, k: 0.78 },
+      minZoom: 0.2,
+      maxZoom: 2.8,
+
+      history: [],
+      historyIndex: -1
+    };
+
+    // DOM Bağlantıları
+    const viewport = document.getElementById("viewport");
+    const world = document.getElementById("world");
+    const nodesContainer = document.getElementById("nodesContainer");
+    const svgPathsGroup = document.getElementById("svgPathsGroup");
+    const svgMainTrunksGroup = document.getElementById("svgMainTrunksGroup");
+    const svgForaminaRingsGroup = document.getElementById("svgForaminaRingsGroup");
+    const svgRelationsGroup = document.getElementById("svgRelationsGroup");
+    const alignmentBackgroundLayer = document.getElementById("alignmentBackgroundLayer");
+    const topographicCompass = document.getElementById("topographicCompass");
+
+    const layoutTopographicBtn = document.getElementById("layoutTopographicBtn");
+    const layoutSchematicBtn = document.getElementById("layoutSchematicBtn");
+    const modeViewBtn = document.getElementById("modeViewBtn");
+    const modeMoveBtn = document.getElementById("modeMoveBtn");
+    const modeEditBtn = document.getElementById("modeEditBtn");
+    const moveControlsContainer = document.getElementById("moveControlsContainer");
+    const snapGridCheckbox = document.getElementById("snapGridCheckbox");
+    const autoSubtreeCheckbox = document.getElementById("autoSubtreeCheckbox");
+    const addNewNodeBtn = document.getElementById("addNewNodeBtn");
+
+    const toggleSegmentsBtn = document.getElementById("toggleSegmentsBtn");
+    const toggleRelationsBtn = document.getElementById("toggleRelationsBtn");
+    const toggleAlignmentBtn = document.getElementById("toggleAlignmentBtn");
+    const toggleCompactBtn = document.getElementById("toggleCompactBtn");
+    const btnVertebraMoveTool = document.getElementById("btnVertebraMoveTool");
+
+    const vertebraToolBar = document.getElementById("vertebraToolBar");
+    const vertebraToolStatus = document.getElementById("vertebraToolStatus");
+    const btnVertebraMultiSelect = document.getElementById("btnVertebraMultiSelect");
+    const btnVertebraGroupLock = document.getElementById("btnVertebraGroupLock");
+    const btnVertebraToolDone = document.getElementById("btnVertebraToolDone");
+
+    const undoBtn = document.getElementById("undoBtn");
+    const redoBtn = document.getElementById("redoBtn");
+    const resetViewBtn = document.getElementById("resetViewBtn");
+    const zoomInBtn = document.getElementById("zoomInBtn");
+    const zoomOutBtn = document.getElementById("zoomOutBtn");
+    const zoomResetFloatingBtn = document.getElementById("zoomResetFloatingBtn");
+
+    const detailDrawer = document.getElementById("detailDrawer");
+    const closeDetailBtn = document.getElementById("closeDetailBtn");
+    const focusNodeBtn = document.getElementById("focusNodeBtn");
+    const editFromDetailBtn = document.getElementById("editFromDetailBtn");
+
+    const editModal = document.getElementById("editModal");
+    const closeEditModalBtn = document.getElementById("closeEditModalBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const saveNodeBtn = document.getElementById("saveNodeBtn");
+    const deleteNodeBtn = document.getElementById("deleteNodeBtn");
+
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const searchDropdown = document.getElementById("searchDropdown");
+
+    viewport.addEventListener("contextmenu", e => e.preventDefault());
+
+    /* -------------------------------------------------------------
+       4. LOCAL STORAGE YÖNETİMİ
+       ------------------------------------------------------------- */
+    const STORAGE_KEY = "topographic_anatomy_data_v4";
+    const VERTEBRA_KEY = "vertebra_levels_data_v4";
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.nodes));
+        localStorage.setItem(VERTEBRA_KEY, JSON.stringify(VERTEBRAL_LEVELS));
+      } catch (e) {
+        console.error("Kayıt hatası:", e);
+      }
+    }
+
+    function loadFromLocalStorage() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(DEFAULT_DATASET));
+    }
+
+    function loadVertebraLevels() {
+      try {
+        const stored = localStorage.getItem(VERTEBRA_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) VERTEBRAL_LEVELS = parsed;
+        }
+      } catch (e) {}
+    }
+
+    /* -------------------------------------------------------------
+       5. TARİHÇE (UNDO / REDO)
+       ------------------------------------------------------------- */
+    function recordHistory() {
+      if (state.historyIndex < state.history.length - 1) {
+        state.history = state.history.slice(0, state.historyIndex + 1);
+      }
+      state.history.push(JSON.stringify({
+        nodes: state.nodes,
+        vertebrae: VERTEBRAL_LEVELS
+      }));
+      if (state.history.length > 15) state.history.shift();
+      else state.historyIndex++;
+      updateUndoRedoUI();
+      saveToLocalStorage();
+    }
+
+    function undo() {
+      if (state.historyIndex > 0) {
+        state.historyIndex--;
+        const snapshot = JSON.parse(state.history[state.historyIndex]);
+        state.nodes = snapshot.nodes;
+        VERTEBRAL_LEVELS = snapshot.vertebrae;
+        renderAll();
+        updateUndoRedoUI();
+        saveToLocalStorage();
+        showToast("Geri alındı");
+      }
+    }
+
+    function redo() {
+      if (state.historyIndex < state.history.length - 1) {
+        state.historyIndex++;
+        const snapshot = JSON.parse(state.history[state.historyIndex]);
+        state.nodes = snapshot.nodes;
+        VERTEBRAL_LEVELS = snapshot.vertebrae;
+        renderAll();
+        updateUndoRedoUI();
+        saveToLocalStorage();
+        showToast("İleri alındı");
+      }
+    }
+
+    function updateUndoRedoUI() {
+      undoBtn.disabled = state.historyIndex <= 0;
+      redoBtn.disabled = state.historyIndex >= state.history.length - 1;
+    }
+
+    /* -------------------------------------------------------------
+       6. ZOOM & PAN MATRİSİ
+       ------------------------------------------------------------- */
+    function applyTransform() {
+      world.style.transform = `translate(${state.transform.x}px, ${state.transform.y}px) scale(${state.transform.k})`;
+      zoomResetFloatingBtn.innerText = `${Math.round(state.transform.k * 100)}%`;
+    }
+
+    function zoomAroundPoint(newScale, pointX, pointY) {
+      const clampedScale = Math.min(Math.max(newScale, state.minZoom), state.maxZoom);
+      if (clampedScale === state.transform.k) return;
+
+      const worldX = (pointX - state.transform.x) / state.transform.k;
+      const worldY = (pointY - state.transform.y) / state.transform.k;
+
+      state.transform.k = clampedScale;
+      state.transform.x = pointX - worldX * clampedScale;
+      state.transform.y = pointY - worldY * clampedScale;
+
+      applyTransform();
+    }
+
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.14 : 0.86;
+      zoomAroundPoint(state.transform.k * zoomFactor, e.clientX, e.clientY);
+    }, { passive: false });
+
+    function resetView() {
+      state.transform = { x: 80, y: 30, k: 0.78 };
+      applyTransform();
+      showToast("Görünüm merkeze alındı");
+    }
+
+    function focusNodeOnCanvas(nodeId) {
+      const node = state.nodes.find(n => n.id === nodeId);
+      if (!node) return;
+
+      const pos = getNodePos(node);
+      const vpRect = viewport.getBoundingClientRect();
+      const targetScale = 1.1;
+      const centerX = vpRect.width / 2;
+      const centerY = vpRect.height / 2;
+
+      state.transform.k = targetScale;
+      state.transform.x = centerX - (pos.x + 115) * targetScale;
+      state.transform.y = centerY - (pos.y + 45) * targetScale;
+
+      applyTransform();
+      selectNode(nodeId, false);
+      showToast(`Odaklandı: ${node.label}`);
+    }
+
+    /* -------------------------------------------------------------
+       7. DAL TAŞIMA (SUBTREE) KİLİTLEME YARDIMCILARI
+       ------------------------------------------------------------- */
+    function getAllDescendantIds(rootNodeId) {
+      const descendants = new Set();
+      function traverse(currentId) {
+        state.nodes.forEach(n => {
+          if (n.origins && n.origins.includes(currentId) && !descendants.has(n.id)) {
+            descendants.add(n.id);
+            traverse(n.id);
+          }
+        });
+      }
+      traverse(rootNodeId);
+      return descendants;
+    }
+
+    window.toggleSubtreeLock = function(nodeId, e) {
+      if (e) e.stopPropagation();
+      if (state.lockedSubtreeRootId === nodeId) {
+        clearSubtreeSelection();
+        showToast("Dal taşıma kilidi kaldırıldı");
+      } else {
+        clearSubtreeSelection();
+        state.lockedSubtreeRootId = nodeId;
+        state.subtreeNodeIds = getAllDescendantIds(nodeId);
+        showToast(state.subtreeNodeIds.size > 0 
+          ? `Kilitlendi: ${state.subtreeNodeIds.size} alt dal birlikte taşınacak` 
+          : "Bu yapıya bağlı alt dal bulunmuyor");
+      }
+      renderAll();
+    };
+
+    function clearSubtreeSelection() {
+      state.lockedSubtreeRootId = null;
+      state.subtreeNodeIds.clear();
+      renderAll();
+    }
+
+    /* -------------------------------------------------------------
+       8. AKTİF DÜĞÜM FİLTRESİ (SEGMENTAL AYRIŞMA MANTIĞI)
+       ------------------------------------------------------------- */
+    function getNodePos(node) {
+      if (state.layout === "topographic") {
+        return node.topo || { x: node.x || 100, y: node.y || 100 };
+      }
+      return node.schem || { x: node.x || 100, y: node.y || 100 };
+    }
+
+    function getVisibleNodes() {
+      if (state.layout === "topographic" && state.showSegments) {
+        return state.nodes.filter(n => !n.segmentedIds);
+      } else {
+        return state.nodes.filter(n => !n.isSegmentNode);
+      }
+    }
+
+    /* -------------------------------------------------------------
+       9. ÇİZİM: VERTEBRA VE AXIS MEDIANUM
+       ------------------------------------------------------------- */
+    function renderVertebralAndMedianBackground() {
+      if (!state.showAlignment || state.layout !== "topographic") {
+        alignmentBackgroundLayer.innerHTML = "";
+        return;
+      }
+
+      let html = "";
+
+      html += `
+        <div class="absolute top-[-200px] h-[2200px] pointer-events-none flex flex-col items-center" style="left: 500px; width: 2px;">
+          <div class="w-px h-full bg-rose-500/30 border-l border-dashed border-rose-500/50"></div>
+          <div class="absolute top-10 -translate-x-1/2 bg-rose-950/80 border border-rose-800/80 px-2 py-0.5 rounded text-[9px] font-mono text-rose-300 whitespace-nowrap shadow-md tracking-wider uppercase">
+            Axis Medianum (Midsternal Hat)
+          </div>
+        </div>
+      `;
+
+      VERTEBRAL_LEVELS.forEach(lvl => {
+        const isSelected = state.selectedVertebraIds.has(lvl.id);
+        const handleColor = isSelected ? "border-amber-400 bg-amber-950 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-400";
+        const lineStyle = isSelected ? "border-amber-400/80" : "border-slate-800/80";
+
+        html += `
+          <div class="absolute left-[-600px] w-[2600px] flex items-center pointer-events-none" style="top: ${lvl.y}px;">
+            <div class="h-px bg-slate-800/80 w-full border-t border-dashed ${lineStyle}"></div>
+            <div data-vertebra-id="${lvl.id}" 
+                 class="vertebra-line-handle absolute left-[30px] -top-3.5 px-2 py-0.5 rounded text-[10px] font-mono border shadow-md whitespace-nowrap flex items-center gap-1.5 transition
+                        ${handleColor} ${state.vertebraMoveActive ? 'pointer-events-auto cursor-ns-resize ring-1 ring-sky-400' : 'pointer-events-none'}">
+              <i class="ph-bold ph-arrows-down-up text-xs"></i>
+              <strong class="text-sky-300">${lvl.label}</strong>
+              <span class="text-slate-400 text-[9px]">(${lvl.desc})</span>
+            </div>
+          </div>
+        `;
+      });
+
+      alignmentBackgroundLayer.innerHTML = html;
+    }
+
+    /* -------------------------------------------------------------
+       10. ÇİZİM: SVG DALLANMALARI VE GÖVDE DEVAM OKLARI
+       ------------------------------------------------------------- */
+    function renderSvgLayers() {
+      const visibleNodes = getVisibleNodes();
+      const nodeMap = new Map();
+      visibleNodes.forEach(n => nodeMap.set(n.id, n));
+
+      let branchesHtml = "";
+      let trunksHtml = "";
+      let relationsHtml = "";
+
+      const CARD_W = state.compactView ? 160 : 230;
+      const CARD_H = state.compactView ? 42 : 94;
+
+      visibleNodes.forEach(target => {
+        if (!target.origins || target.origins.length === 0) return;
+
+        const tPos = getNodePos(target);
+        const tCenter = { x: tPos.x + CARD_W / 2, y: tPos.y + (CARD_H / 2) };
+
+        target.origins.forEach(sourceId => {
+          let actualSourceId = sourceId;
+
+          if (!state.showSegments) {
+            const tempSource = state.nodes.find(n => n.id === sourceId);
+            if (tempSource && tempSource.parentStemId) {
+              actualSourceId = tempSource.parentStemId;
+            }
+          }
+
+          const source = nodeMap.get(actualSourceId);
+          if (!source) return;
+
+          const sPos = getNodePos(source);
+          const sCenter = { x: sPos.x + CARD_W / 2, y: sPos.y + (CARD_H / 2) };
+
+          if (target.isTrunkContinuation) {
+            const trunkPath = `M ${sCenter.x} ${sCenter.y} L ${tCenter.x} ${tCenter.y}`;
+            trunksHtml += `
+              <path d="${trunkPath}" fill="none" stroke="#f43f5e" stroke-width="5.5" stroke-linecap="round" 
+                    stroke-opacity="0.9" marker-end="url(#arrow-trunk)" />
+              <text x="${(sCenter.x + tCenter.x) / 2 + 14}" y="${(sCenter.y + tCenter.y) / 2}" fill="#fda4af" font-size="9" font-family="monospace">
+                Gövde Devamı
+              </text>
+            `;
+            return;
+          }
+
+          let pathD = "";
+          let strokeColor = "#ef4444";
+          let strokeWidth = 2.0;
+          let marker = "url(#arrow-artery)";
+
+          if (target.category === "vein") {
+            strokeColor = "#3b82f6";
+            marker = "url(#arrow-vein)";
+          } else if (target.category && target.category.includes("nerve")) {
+            strokeColor = "#facc15";
+            marker = "url(#arrow-nerve)";
+          }
+
+          if (state.layout === "topographic" && source.id === "aorta_ascendens" && target.id === "arcus_aortae") {
+            pathD = `M ${sCenter.x} ${sCenter.y} Q ${sCenter.x + 30} ${sCenter.y - 70}, ${tCenter.x} ${tCenter.y}`;
+            strokeWidth = 6.5;
+            marker = "";
+          } else if (state.layout === "topographic" && source.id === "arcus_aortae" && target.id === "aorta_descendens_thoracica") {
+            pathD = `M ${sCenter.x} ${sCenter.y} Q ${sCenter.x + 70} ${sCenter.y + 120}, ${tCenter.x} ${tCenter.y}`;
+            strokeWidth = 5.5;
+            marker = "";
+          } else {
+            const deltaY = tCenter.y - sCenter.y;
+            const deltaX = tCenter.x - sCenter.x;
+            const cp1x = sCenter.x + (deltaX * 0.1);
+            const cp1y = sCenter.y + (deltaY * 0.5);
+            const cp2x = tCenter.x - (deltaX * 0.1);
+            const cp2y = tCenter.y - (deltaY * 0.5);
+            pathD = `M ${sCenter.x} ${sCenter.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${tCenter.x} ${tCenter.y}`;
+          }
+
+          branchesHtml += `
+            <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" 
+                  stroke-opacity="0.7" marker-end="${marker}" />
+          `;
+        });
+      });
+
+      if (state.showRelations && state.layout === "topographic") {
+        TOPOGRAPHIC_RELATIONS.forEach(rel => {
+          const sNode = nodeMap.get(rel.source);
+          const tNode = nodeMap.get(rel.target);
+          if (!sNode || !tNode) return;
+
+          const sp = getNodePos(sNode);
+          const tp = getNodePos(tNode);
+          const sx = sp.x + CARD_W / 2;
+          const sy = sp.y + CARD_H / 2;
+          const tx = tp.x + CARD_W / 2;
+          const ty = tp.y + CARD_H / 2;
+
+          relationsHtml += `
+            <g>
+              <line x1="${sx}" y1="${sy}" x2="${tx}" y2="${ty}" stroke="#c084fc" stroke-width="1.8" class="relation-path" opacity="0.8" />
+              <circle cx="${(sx + tx) / 2}" cy="${(sy + ty) / 2}" r="3.5" fill="#a855f7" />
+              <text x="${(sx + tx) / 2}" y="${(sy + ty) / 2 - 8}" fill="#e9d5ff" font-size="8.5" font-family="monospace" text-anchor="middle">
+                ${rel.label}
+              </text>
+            </g>
+          `;
+        });
+      }
+
+      svgPathsGroup.innerHTML = branchesHtml;
+      svgMainTrunksGroup.innerHTML = trunksHtml;
+      svgRelationsGroup.innerHTML = relationsHtml;
+    }
+
+    /* -------------------------------------------------------------
+       11. ÇİZİM: ANATOMİK DÜĞÜMLER
+       ------------------------------------------------------------- */
+    function renderNodes() {
+      let html = "";
+      const CARD_W = state.compactView ? 160 : 230;
+      const visibleNodes = getVisibleNodes();
+
+      visibleNodes.forEach(node => {
+        const pos = getNodePos(node);
+        const isSelected = state.selectedNodeId === node.id;
+        const isLockedRoot = state.lockedSubtreeRootId === node.id;
+        const isSubtreeChild = state.subtreeNodeIds.has(node.id);
+
+        let lineageClass = "";
+        if (isLockedRoot) lineageClass = "lineage-active";
+        else if (isSubtreeChild) lineageClass = "lineage-child";
+
+        let borderCol = "border-red-500/80 bg-red-950/40 text-red-300";
+        if (node.category === "vein") borderCol = "border-blue-500/80 bg-blue-950/40 text-blue-300";
+        if (node.category && node.category.includes("nerve")) borderCol = "border-amber-400/80 bg-amber-950/40 text-amber-300";
+
+        const segmentBadge = node.isSegmentNode 
+          ? `<span class="text-[8px] bg-amber-500/30 text-amber-200 border border-amber-500/40 px-1 py-0.2 rounded font-mono">SEGMENT GÖVDESİ</span>`
+          : "";
+
+        if (state.compactView) {
+          html += `
+            <div id="node-${node.id}" data-node-id="${node.id}"
+                 style="left: ${pos.x}px; top: ${pos.y}px; width: ${CARD_W}px;"
+                 class="absolute rounded-lg ${borderCol} border backdrop-blur-md node-shadow px-2.5 py-1.5 cursor-pointer transition select-none ${lineageClass}
+                        ${isSelected ? 'ring-2 ring-rose-400 ring-offset-2 ring-offset-slate-950' : ''}">
+              <div class="font-bold text-slate-100 text-[11px] truncate leading-tight">${node.label}</div>
+              <div class="text-[9px] text-slate-400 truncate font-mono">${node.roots || ''}</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div id="node-${node.id}" data-node-id="${node.id}"
+                 style="left: ${pos.x}px; top: ${pos.y}px; width: ${CARD_W}px;"
+                 class="absolute rounded-xl ${borderCol} border backdrop-blur-md node-shadow p-3 cursor-pointer transition select-none ${lineageClass}
+                        ${isSelected ? 'ring-2 ring-rose-400 ring-offset-2 ring-offset-slate-950' : ''}">
+              
+              <div class="flex items-center justify-between gap-1 mb-1 pointer-events-none">
+                <div class="flex items-center gap-1">
+                  <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.2 rounded bg-black/40">
+                    ${node.side === 'right' ? 'SAĞ' : node.side === 'left' ? 'SOL' : 'ORTA'}
+                  </span>
+                  ${segmentBadge}
+                </div>
+                <span class="text-[9px] font-mono text-amber-300 font-semibold truncate max-w-[100px]">
+                  ${node.roots || ''}
+                </span>
+              </div>
+
+              <div class="font-bold text-slate-100 text-xs leading-snug tracking-tight mb-1 pointer-events-none">
+                ${node.label}
+              </div>
+
+              <div class="text-[10px] text-slate-400 truncate pointer-events-none">
+                ${node.location || ''}
+              </div>
+
+              <div class="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="text-[9px] text-slate-400 flex items-center gap-1 pointer-events-none">
+                  <i class="ph-bold ph-git-merge text-rose-400"></i> ${node.origins ? node.origins.length : 0} öncül
+                </span>
+
+                ${state.mode === 'move' ? `
+                  <button onclick="toggleSubtreeLock('${node.id}', event)" 
+                          class="px-1.5 py-0.5 rounded flex items-center gap-1 font-medium transition text-[10px]
+                                 ${isLockedRoot ? 'bg-rose-600 text-white ring-1 ring-rose-400' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'}">
+                    <i class="ph-bold ph-tree-structure text-xs"></i>
+                    <span>${isLockedRoot ? 'Kilitli' : 'Dallarla Taşı'}</span>
+                  </button>
+                ` : state.mode === 'edit' ? `
+                  <button onclick="openEditModal('${node.id}', event)" class="text-rose-400 hover:text-rose-300 px-1.5 py-0.5 rounded bg-rose-950/60 border border-rose-800">
+                    <i class="ph-bold ph-pencil"></i> Düzenle
+                  </button>
+                ` : `
+                  <span class="text-[9px] text-slate-500">Dokun: İncele</span>
+                `}
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      nodesContainer.innerHTML = html;
+    }
+
+    function renderAll() {
+      renderVertebralAndMedianBackground();
+      renderSvgLayers();
+      renderNodes();
+    }
+
+    /* -------------------------------------------------------------
+       12. ETKİLEŞİM MOTORU: DÜĞÜM VE VERTEBRA TAŞIMA
+       ------------------------------------------------------------- */
+    let activePointers = new Map();
+    let pinchStartDistance = null;
+    let pinchStartScale = null;
+    let pinchStartMidpointWorld = null;
+
+    let isDraggingNode = false;
+    let primaryDragNode = null;
+    let dragStartNodePos = new Map();
+    let dragClickWorldOffset = { x: 0, y: 0 };
+    let hasMovedDuringDrag = false;
+    let activeDragSubtreeIds = new Set();
+
+    let isPanning = false;
+    let panStart = { x: 0, y: 0 };
+    let panOrigin = { x: 0, y: 0 };
+
+    let tapStartPos = { x: 0, y: 0 };
+    let tapTargetNodeId = null;
+    const DRAG_THRESHOLD = 6;
+
+    viewport.addEventListener("pointerdown", (e) => {
+      const vHandle = e.target.closest("[data-vertebra-id]");
+      if (state.vertebraMoveActive && vHandle) {
+        const vId = vHandle.getAttribute("data-vertebra-id");
+
+        if (state.vertebraSelectMode) {
+          if (state.selectedVertebraIds.has(vId)) state.selectedVertebraIds.delete(vId);
+          else state.selectedVertebraIds.add(vId);
+          renderVertebralAndMedianBackground();
+          return;
+        }
+
+        state.isDraggingVertebra = true;
+        state.activeDragVertebraId = vId;
+        state.vertebraDragStartY = (e.clientY - state.transform.y) / state.transform.k;
+        state.vertebraStartPositions.clear();
+
+        if (state.selectedVertebraIds.has(vId) && state.selectedVertebraIds.size > 1) {
+          state.selectedVertebraIds.forEach(id => {
+            const v = VERTEBRAL_LEVELS.find(lvl => lvl.id === id);
+            if (v) state.vertebraStartPositions.set(id, v.y);
+          });
+        } else {
+          const v = VERTEBRAL_LEVELS.find(lvl => lvl.id === vId);
+          if (v) state.vertebraStartPositions.set(vId, v.y);
+        }
+
+        viewport.setPointerCapture(e.pointerId);
+        return;
+      }
+
+      if (e.target.closest("button") || e.target.closest("input")) return;
+
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const nodeEl = e.target.closest("[data-node-id]");
+      const nodeId = nodeEl ? nodeEl.getAttribute("data-node-id") : null;
+
+      tapStartPos = { x: e.clientX, y: e.clientY };
+      tapTargetNodeId = nodeId;
+
+      if (activePointers.size === 2) {
+        isPanning = false;
+        isDraggingNode = false;
+        const pts = Array.from(activePointers.values());
+        pinchStartDistance = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        pinchStartScale = state.transform.k;
+        const midScreen = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+        pinchStartMidpointWorld = {
+          x: (midScreen.x - state.transform.x) / state.transform.k,
+          y: (midScreen.y - state.transform.y) / state.transform.k
+        };
+        return;
+      }
+
+      if (activePointers.size === 1) {
+        if (state.mode === "move" && nodeId) {
+          primaryDragNode = state.nodes.find(n => n.id === nodeId);
+          if (primaryDragNode) {
+            isDraggingNode = true;
+            hasMovedDuringDrag = false;
+
+            const pos = getNodePos(primaryDragNode);
+            const worldClickX = (e.clientX - state.transform.x) / state.transform.k;
+            const worldClickY = (e.clientY - state.transform.y) / state.transform.k;
+            dragClickWorldOffset = { x: worldClickX - pos.x, y: worldClickY - pos.y };
+
+            dragStartNodePos.clear();
+            state.nodes.forEach(n => {
+              const p = getNodePos(n);
+              dragStartNodePos.set(n.id, { x: p.x, y: p.y });
+            });
+
+            activeDragSubtreeIds.clear();
+            if (state.lockedSubtreeRootId === nodeId) {
+              activeDragSubtreeIds = new Set(state.subtreeNodeIds);
+            } else if (state.autoSubtreeMove) {
+              activeDragSubtreeIds = getAllDescendantIds(nodeId);
+            }
+
+            viewport.setPointerCapture(e.pointerId);
+            return;
+          }
+        }
+
+        isPanning = true;
+        panStart = { x: e.clientX, y: e.clientY };
+        panOrigin = { x: state.transform.x, y: state.transform.y };
+        viewport.setPointerCapture(e.pointerId);
+      }
+    });
+
+    viewport.addEventListener("pointermove", (e) => {
+      if (activePointers.has(e.pointerId)) {
+        activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      }
+
+      if (state.isDraggingVertebra) {
+        const curWorldY = (e.clientY - state.transform.y) / state.transform.k;
+        const deltaY = Math.round(curWorldY - state.vertebraDragStartY);
+
+        state.vertebraStartPositions.forEach((startY, vId) => {
+          const v = VERTEBRAL_LEVELS.find(lvl => lvl.id === vId);
+          if (v) v.y = Math.round(startY + deltaY);
+        });
+
+        renderVertebralAndMedianBackground();
+        return;
+      }
+
+      if (activePointers.size === 2 && pinchStartDistance && pinchStartMidpointWorld) {
+        const pts = Array.from(activePointers.values());
+        const curDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        const curMid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+
+        const targetScale = Math.min(Math.max(pinchStartScale * (curDist / pinchStartDistance), state.minZoom), state.maxZoom);
+        state.transform.k = targetScale;
+        state.transform.x = curMid.x - pinchStartMidpointWorld.x * targetScale;
+        state.transform.y = curMid.y - pinchStartMidpointWorld.y * targetScale;
+        applyTransform();
+        return;
+      }
+
+      if (isDraggingNode && primaryDragNode) {
+        const moveDist = Math.hypot(e.clientX - tapStartPos.x, e.clientY - tapStartPos.y);
+        if (moveDist > DRAG_THRESHOLD) hasMovedDuringDrag = true;
+
+        const worldCurrentX = (e.clientX - state.transform.x) / state.transform.k;
+        const worldCurrentY = (e.clientY - state.transform.y) / state.transform.k;
+
+        let targetX = worldCurrentX - dragClickWorldOffset.x;
+        let targetY = worldCurrentY - dragClickWorldOffset.y;
+
+        if (state.snapToGrid) {
+          targetX = Math.round(targetX / state.gridStep) * state.gridStep;
+          targetY = Math.round(targetY / state.gridStep) * state.gridStep;
+        }
+
+        const origPos = dragStartNodePos.get(primaryDragNode.id);
+        const deltaX = targetX - origPos.x;
+        const deltaY = targetY - origPos.y;
+
+        const updateCoord = (n, x, y) => {
+          if (state.layout === "topographic") n.topo = { x, y };
+          else n.schem = { x, y };
+        };
+
+        updateCoord(primaryDragNode, targetX, targetY);
+
+        if (activeDragSubtreeIds.size > 0) {
+          activeDragSubtreeIds.forEach(descId => {
+            const descNode = state.nodes.find(n => n.id === descId);
+            const origP = dragStartNodePos.get(descId);
+            if (descNode && origP) {
+              let nx = origP.x + deltaX;
+              let ny = origP.y + deltaY;
+              if (state.snapToGrid) {
+                nx = Math.round(nx / state.gridStep) * state.gridStep;
+                ny = Math.round(ny / state.gridStep) * state.gridStep;
+              }
+              updateCoord(descNode, nx, ny);
+              const el = document.getElementById(`node-${descNode.id}`);
+              if (el) { el.style.left = `${nx}px`; el.style.top = `${ny}px`; }
+            }
+          });
+        }
+
+        const primEl = document.getElementById(`node-${primaryDragNode.id}`);
+        if (primEl) {
+          primEl.style.left = `${targetX}px`;
+          primEl.style.top = `${targetY}px`;
+        }
+
+        renderSvgLayers();
+        return;
+      }
+
+      if (isPanning) {
+        state.transform.x = panOrigin.x + (e.clientX - panStart.x);
+        state.transform.y = panOrigin.y + (e.clientY - panStart.y);
+        applyTransform();
+      }
+    });
+
+    viewport.addEventListener("pointerup", (e) => {
+      activePointers.delete(e.pointerId);
+      try { viewport.releasePointerCapture(e.pointerId); } catch (err) {}
+
+      if (state.isDraggingVertebra) {
+        state.isDraggingVertebra = false;
+        recordHistory();
+        return;
+      }
+
+      if (isDraggingNode) {
+        isDraggingNode = false;
+        if (hasMovedDuringDrag) recordHistory();
+        primaryDragNode = null;
+        activeDragSubtreeIds.clear();
+      }
+
+      isPanning = false;
+
+      const totalDist = Math.hypot(e.clientX - tapStartPos.x, e.clientY - tapStartPos.y);
+      if (totalDist <= DRAG_THRESHOLD && tapTargetNodeId) {
+        selectNode(tapTargetNodeId, state.mode === "view");
+      }
+    });
+
+    /* -------------------------------------------------------------
+       13. VERTEBRA Y-EKSENİ TAŞIMA ARACI
+       ------------------------------------------------------------- */
+    btnVertebraMoveTool.addEventListener("click", () => {
+      if (state.layout !== "topographic") {
+        showToast("Vertebra taşıma sadece Topografik Modda çalışır!", true);
+        return;
+      }
+      state.vertebraMoveActive = true;
+      state.vertebraSelectMode = false;
+      state.selectedVertebraIds.clear();
+      vertebraToolBar.classList.remove("hidden");
+      btnVertebraGroupLock.classList.add("hidden");
+      btnVertebraMultiSelect.classList.remove("hidden");
+      vertebraToolStatus.innerText = "Tekli Taşı: Çizgiye dokunup Y ekseninde kaydırın";
+      renderVertebralAndMedianBackground();
+      showToast("Vertebra Taşıma Modu Açık");
+    });
+
+    btnVertebraMultiSelect.addEventListener("click", () => {
+      state.vertebraSelectMode = true;
+      btnVertebraMultiSelect.classList.add("hidden");
+      btnVertebraGroupLock.classList.remove("hidden");
+      vertebraToolStatus.innerText = "Kaydırmak istediğiniz vertebralara sırayla dokunun";
+    });
+
+    btnVertebraGroupLock.addEventListener("click", () => {
+      state.vertebraSelectMode = false;
+      if (state.selectedVertebraIds.size === 0) return showToast("Lütfen en az bir vertebra seçin", true);
+      vertebraToolStatus.innerText = `${state.selectedVertebraIds.size} vertebra kilitlendi. Y ekseninde beraber kaydırın`;
+      showToast("Çizgiler kilitlendi!");
+    });
+
+    btnVertebraToolDone.addEventListener("click", () => {
+      state.vertebraMoveActive = false;
+      state.vertebraSelectMode = false;
+      state.selectedVertebraIds.clear();
+      vertebraToolBar.classList.add("hidden");
+      renderVertebralAndMedianBackground();
+      recordHistory();
+      showToast("Vertebra konumları kaydedildi");
+    });
+
+    /* -------------------------------------------------------------
+       14. DETAY PANELİ & DÜZENLEME MODALI
+       ------------------------------------------------------------- */
+    function selectNode(id, openDrawer = false) {
+      state.selectedNodeId = id;
+      renderAll();
+
+      if (!openDrawer) return;
+      const node = state.nodes.find(n => n.id === id);
+      if (!node) return;
+
+      document.getElementById("detailTitle").innerText = node.label;
+      document.getElementById("detailRootsBadge").innerText = node.roots || "Hiza belirtilmedi";
+      document.getElementById("detailLocationText").innerText = node.location || "-";
+      document.getElementById("detailNotes").innerText = node.notes || "Klinik detay notu bulunmuyor.";
+
+      const originsList = document.getElementById("detailOriginsList");
+      originsList.innerHTML = (node.origins && node.origins.length > 0)
+        ? node.origins.map(oid => {
+            const p = state.nodes.find(n => n.id === oid);
+            return `<button onclick="selectNode('${oid}', true)" class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 text-rose-300 hover:text-white transition">${p ? p.label : oid}</button>`;
+          }).join('')
+        : '<span class="text-slate-500 italic">Başlangıç Gövdesi</span>';
+
+      const derivativesList = document.getElementById("detailDerivativesList");
+      const children = state.nodes.filter(n => n.origins && n.origins.includes(node.id));
+      derivativesList.innerHTML = children.length > 0
+        ? children.map(c => `<button onclick="selectNode('${c.id}', true)" class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700 text-emerald-300 hover:text-white transition">${c.label}</button>`).join('')
+        : '<span class="text-slate-500 italic">Terminal Dağılım</span>';
+
+      detailDrawer.classList.remove("translate-x-full");
+    }
+
+    closeDetailBtn.addEventListener("click", () => detailDrawer.classList.add("translate-x-full"));
+    focusNodeBtn.addEventListener("click", () => {
+      if (state.selectedNodeId) focusNodeOnCanvas(state.selectedNodeId);
+    });
+    editFromDetailBtn.addEventListener("click", () => {
+      if (state.selectedNodeId) openEditModal(state.selectedNodeId);
+    });
+
+    window.openEditModal = function(nodeId = null, e = null) {
+      if (e) e.stopPropagation();
+      const isNew = !nodeId;
+      document.getElementById("editModalHeaderTitle").innerHTML = isNew
+        ? '<i class="ph-bold ph-plus-circle text-emerald-400"></i> Yeni Yapı Ekle'
+        : '<i class="ph-bold ph-pencil-simple-line text-rose-400"></i> Yapıyı Düzenle';
+
+      document.getElementById("formNodeId").value = nodeId || "";
+      deleteNodeBtn.style.display = isNew ? "none" : "flex";
+
+      let targetNode;
+      if (isNew) {
+        const vpRect = viewport.getBoundingClientRect();
+        targetNode = {
+          id: "node_" + Date.now().toString(36),
+          label: "", category: "artery", side: "left", roots: "", location: "", notes: "",
+          origins: state.selectedNodeId ? [state.selectedNodeId] : [],
+          topo: { x: Math.round((vpRect.width / 2 - state.transform.x) / state.transform.k) - 100, y: Math.round((vpRect.height / 2 - state.transform.y) / state.transform.k) - 40 },
+          schem: { x: 400, y: 400 }
+        };
+      } else {
+        targetNode = state.nodes.find(n => n.id === nodeId);
+        if (!targetNode) return;
+      }
+
+      document.getElementById("formLabel").value = targetNode.label || "";
+      document.getElementById("formCategory").value = targetNode.category || "artery";
+      document.getElementById("formSide").value = targetNode.side || "left";
+      document.getElementById("formRoots").value = targetNode.roots || "";
+      document.getElementById("formLocation").value = targetNode.location || "";
+      document.getElementById("formNotes").value = targetNode.notes || "";
+
+      const originsContainer = document.getElementById("formOriginsContainer");
+      originsContainer.innerHTML = "";
+      state.nodes.forEach(n => {
+        if (!isNew && n.id === targetNode.id) return;
+        const isChecked = targetNode.origins && targetNode.origins.includes(n.id);
+        const labelEl = document.createElement("label");
+        labelEl.className = "flex items-center gap-2 p-1 hover:bg-slate-800 rounded cursor-pointer text-slate-300";
+        labelEl.innerHTML = `
+          <input type="checkbox" value="${n.id}" ${isChecked ? 'checked' : ''} class="origin-checkbox rounded border-slate-700 text-rose-600 focus:ring-0">
+          <span>${n.label} <span class="text-[10px] text-slate-500 font-mono">(${n.roots || ''})</span></span>
+        `;
+        originsContainer.appendChild(labelEl);
+      });
+
+      editModal.classList.remove("hidden");
+    };
+
+    closeEditModalBtn.addEventListener("click", () => editModal.classList.add("hidden"));
+    cancelEditBtn.addEventListener("click", () => editModal.classList.add("hidden"));
+
+    saveNodeBtn.addEventListener("click", () => {
+      const id = document.getElementById("formNodeId").value;
+      const label = document.getElementById("formLabel").value.trim();
+      if (!label) return showToast("Lütfen bir isim girin", true);
+
+      const category = document.getElementById("formCategory").value;
+      const side = document.getElementById("formSide").value;
+      const roots = document.getElementById("formRoots").value.trim();
+      const location = document.getElementById("formLocation").value.trim();
+      const notes = document.getElementById("formNotes").value.trim();
+
+      const selectedOrigins = [];
+      document.querySelectorAll(".origin-checkbox:checked").forEach(cb => selectedOrigins.push(cb.value));
+
+      if (!id) {
+        const vpRect = viewport.getBoundingClientRect();
+        const newNode = {
+          id: "node_" + Date.now().toString(36),
+          label, category, side, roots, location, notes,
+          origins: selectedOrigins,
+          topo: { x: Math.round((vpRect.width / 2 - state.transform.x) / state.transform.k) - 100, y: Math.round((vpRect.height / 2 - state.transform.y) / state.transform.k) - 40 },
+          schem: { x: 400, y: 400 }
+        };
+        state.nodes.push(newNode);
+        state.selectedNodeId = newNode.id;
+        showToast("Yeni yapı eklendi");
+      } else {
+        const node = state.nodes.find(n => n.id === id);
+        if (node) {
+          node.label = label;
+          node.category = category;
+          node.side = side;
+          node.roots = roots;
+          node.location = location;
+          node.notes = notes;
+          node.origins = selectedOrigins;
+          showToast("Yapı güncellendi");
+        }
+      }
+
+      recordHistory();
+      renderAll();
+      editModal.classList.add("hidden");
+      if (state.selectedNodeId) selectNode(state.selectedNodeId, true);
+    });
+
+    deleteNodeBtn.addEventListener("click", () => {
+      const id = document.getElementById("formNodeId").value;
+      if (!id) return;
+      state.nodes.forEach(n => {
+        if (n.origins) n.origins = n.origins.filter(origId => origId !== id);
+      });
+      state.nodes = state.nodes.filter(n => n.id !== id);
+      if (state.selectedNodeId === id) {
+        state.selectedNodeId = null;
+        detailDrawer.classList.add("translate-x-full");
+      }
+      recordHistory();
+      renderAll();
+      editModal.classList.add("hidden");
+      showToast("Yapı silindi");
+    });
+
+    addNewNodeBtn.addEventListener("click", () => openEditModal(null));
+
+    /* -------------------------------------------------------------
+       15. KATMAN & MOD BUTONLARI
+       ------------------------------------------------------------- */
+    function setMode(newMode) {
+      state.mode = newMode;
+      clearSubtreeSelection();
+
+      [modeViewBtn, modeMoveBtn, modeEditBtn].forEach(b => {
+        b.className = "flex items-center gap-1 px-2 py-1 rounded text-slate-400 hover:text-white transition";
+      });
+
+      if (newMode === "view") {
+        modeViewBtn.className = "flex items-center gap-1 px-2 py-1 rounded text-white bg-slate-800 font-medium transition";
+        moveControlsContainer.classList.add("hidden");
+        addNewNodeBtn.classList.add("hidden");
+      } else if (newMode === "move") {
+        modeMoveBtn.className = "flex items-center gap-1 px-2 py-1 rounded text-white bg-slate-800 font-medium transition";
+        moveControlsContainer.classList.remove("hidden");
+        addNewNodeBtn.classList.add("hidden");
+      } else if (newMode === "edit") {
+        modeEditBtn.className = "flex items-center gap-1 px-2 py-1 rounded text-white bg-slate-800 font-medium transition";
+        moveControlsContainer.classList.add("hidden");
+        addNewNodeBtn.classList.remove("hidden");
+      }
+      renderAll();
+    }
+
+    modeViewBtn.addEventListener("click", () => setMode("view"));
+    modeMoveBtn.addEventListener("click", () => setMode("move"));
+    modeEditBtn.addEventListener("click", () => setMode("edit"));
+
+    layoutTopographicBtn.addEventListener("click", () => {
+      state.layout = "topographic";
+      layoutTopographicBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-md text-white font-medium bg-rose-600 shadow-sm transition";
+      layoutSchematicBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200 transition";
+      
+      toggleRelationsBtn.classList.remove("opacity-30", "pointer-events-none");
+      toggleAlignmentBtn.classList.remove("opacity-30", "pointer-events-none");
+      btnVertebraMoveTool.classList.remove("opacity-30", "pointer-events-none");
+      topographicCompass.classList.remove("hidden");
+
+      renderAll();
+      showToast("Topografik Düzen Aktif");
+    });
+
+    layoutSchematicBtn.addEventListener("click", () => {
+      state.layout = "schematic";
+      layoutSchematicBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-md text-white font-medium bg-rose-600 shadow-sm transition";
+      layoutTopographicBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200 transition";
+
+      toggleRelationsBtn.classList.add("opacity-30", "pointer-events-none");
+      toggleAlignmentBtn.classList.add("opacity-30", "pointer-events-none");
+      btnVertebraMoveTool.classList.add("opacity-30", "pointer-events-none");
+      topographicCompass.classList.add("hidden");
+      if (state.vertebraMoveActive) btnVertebraToolDone.click();
+
+      renderAll();
+      showToast("Şematik Düzen Aktif");
+    });
+
+    toggleSegmentsBtn.addEventListener("click", () => {
+      state.showSegments = !state.showSegments;
+      toggleSegmentsBtn.classList.toggle("bg-amber-950/60", state.showSegments);
+      toggleSegmentsBtn.classList.toggle("border-amber-600/60", state.showSegments);
+      renderAll();
+      showToast(state.showSegments 
+        ? "Segment Gövdeleri Açık" 
+        : "Segment Gövdeleri Kapalı");
+    });
+
+    toggleRelationsBtn.addEventListener("click", () => {
+      if (state.layout !== "topographic") return;
+      state.showRelations = !state.showRelations;
+      toggleRelationsBtn.classList.toggle("bg-purple-950/40", state.showRelations);
+      renderAll();
+    });
+
+    toggleAlignmentBtn.addEventListener("click", () => {
+      if (state.layout !== "topographic") return;
+      state.showAlignment = !state.showAlignment;
+      toggleAlignmentBtn.classList.toggle("bg-sky-950/40", state.showAlignment);
+      renderAll();
+    });
+
+    toggleCompactBtn.addEventListener("click", () => {
+      state.compactView = !state.compactView;
+      toggleCompactBtn.classList.toggle("bg-emerald-950/60", state.compactView);
+      renderAll();
+    });
+
+    snapGridCheckbox.addEventListener("change", e => {
+      state.snapToGrid = e.target.checked;
+      showToast(state.snapToGrid ? "Hizalama açık (20px)" : "Serbest hareket");
+    });
+
+    autoSubtreeCheckbox.addEventListener("change", e => {
+      state.autoSubtreeMove = e.target.checked;
+      showToast(state.autoSubtreeMove ? "Tüm dalı taşıma açık" : "Tekli taşıma açık");
+    });
+
+    /* -------------------------------------------------------------
+       16. ARAMA VE ZOOM BUTONLARI
+       ------------------------------------------------------------- */
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        clearSearchBtn.classList.add("hidden");
+        searchDropdown.classList.add("hidden");
+        return;
+      }
+      clearSearchBtn.classList.remove("hidden");
+
+      const matches = state.nodes.filter(n =>
+        n.label.toLowerCase().includes(q) ||
+        (n.roots && n.roots.toLowerCase().includes(q)) ||
+        (n.location && n.location.toLowerCase().includes(q))
+      );
+
+      if (matches.length === 0) {
+        searchDropdown.innerHTML = '<div class="px-3 py-2 text-slate-500 italic">Eşleşme bulunamadı.</div>';
+      } else {
+        searchDropdown.innerHTML = matches.map(n => `
+          <button class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200 transition" onclick="selectAndFocusFromSearch('${n.id}')">
+            <div>
+              <div class="font-bold text-white text-xs">${n.label}</div>
+              <div class="text-[10px] text-slate-400">${n.location || ''}</div>
+            </div>
+            <span class="text-[10px] text-amber-400 font-mono">${n.roots || ''}</span>
+          </button>
+        `).join('');
+      }
+      searchDropdown.classList.remove("hidden");
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      clearSearchBtn.classList.add("hidden");
+      searchDropdown.classList.add("hidden");
+    });
+
+    window.selectAndFocusFromSearch = function(nodeId) {
+      searchDropdown.classList.add("hidden");
+      focusNodeOnCanvas(nodeId);
+      selectNode(nodeId, true);
+    };
+
+    resetViewBtn.addEventListener("click", resetView);
+    zoomInBtn.addEventListener("click", () => {
+      const vp = viewport.getBoundingClientRect();
+      zoomAroundPoint(state.transform.k * 1.25, vp.width / 2, vp.height / 2);
+    });
+    zoomOutBtn.addEventListener("click", () => {
+      const vp = viewport.getBoundingClientRect();
+      zoomAroundPoint(state.transform.k * 0.8, vp.width / 2, vp.height / 2);
+    });
+    zoomResetFloatingBtn.addEventListener("click", () => {
+      const vp = viewport.getBoundingClientRect();
+      zoomAroundPoint(1.0, vp.width / 2, vp.height / 2);
+    });
+
+    undoBtn.addEventListener("click", undo);
+    redoBtn.addEventListener("click", redo);
+
+    openRoadmapBtn.addEventListener("click", () => {
+      roadmapTextarea.value = localStorage.getItem("anatomy_roadmap_notes") || "";
+      roadmapModal.classList.remove("hidden");
+    });
+    closeRoadmapModalBtn.addEventListener("click", () => roadmapModal.classList.add("hidden"));
+    roadmapTextarea.addEventListener("input", () => {
+      localStorage.setItem("anatomy_roadmap_notes", roadmapTextarea.value);
+    });
+
+    fullscreenToggleBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else if (document.exitFullscreen) document.exitFullscreen();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) redo(); else undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+        e.preventDefault();
+        redo();
+      } else if (e.key === "Escape") {
+        detailDrawer.classList.add("translate-x-full");
+        editModal.classList.add("hidden");
+        document.getElementById("dataModal").classList.add("hidden");
+        roadmapModal.classList.add("hidden");
+        if (state.vertebraMoveActive) btnVertebraToolDone.click();
+      }
+    });
+
+    /* -------------------------------------------------------------
+       17. AKILLI JSON İÇE AKTARMA (REPLACE & MERGE)
+       ------------------------------------------------------------- */
+    document.getElementById("openDataModalBtn").addEventListener("click", () => {
+      document.getElementById("dataModal").classList.remove("hidden");
+    });
+    document.getElementById("closeDataModalBtn").addEventListener("click", () => {
+      document.getElementById("dataModal").classList.add("hidden");
+    });
+
+    document.getElementById("exportJsonBtn").addEventListener("click", () => {
+      const exportObj = { nodes: state.nodes, vertebrae: VERTEBRAL_LEVELS };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+      const dl = document.createElement("a");
+      dl.setAttribute("href", dataStr);
+      dl.setAttribute("download", `topografik_anatomi_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(dl);
+      dl.click();
+      dl.remove();
+      showToast("Yedek JSON indirildi");
+    });
+
+    function parseImportInput() {
+      const raw = document.getElementById("importPasteTextarea").value.trim();
+      if (!raw) {
+        showToast("Lütfen JSON metni yapıştırın!", true);
+        return null;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        let incomingNodes = [];
+        let incomingVertebrae = null;
+
+        if (Array.isArray(parsed)) {
+          incomingNodes = parsed;
+        } else if (parsed.nodes && Array.isArray(parsed.nodes)) {
+          incomingNodes = parsed.nodes;
+          if (parsed.vertebrae) incomingVertebrae = parsed.vertebrae;
+        }
+        return { incomingNodes, incomingVertebrae };
+      } catch (err) {
+        showToast("Geçersiz JSON formatı!", true);
+        return null;
+      }
+    }
+
+    // Tamamen Değiştir (Replace)
+    document.getElementById("parseReplaceBtn").addEventListener("click", () => {
+      const res = parseImportInput();
+      if (!res) return;
+      state.nodes = res.incomingNodes;
+      if (res.incomingVertebrae) VERTEBRAL_LEVELS = res.incomingVertebrae;
+      recordHistory();
+      renderAll();
+      document.getElementById("dataModal").classList.add("hidden");
+      showToast(`Harita güncellendi (${state.nodes.length} yapı)`);
+    });
+
+    // Akıllı Birleştir (Merge)
+    document.getElementById("parseMergeBtn").addEventListener("click", () => {
+      const res = parseImportInput();
+      if (!res) return;
+      const nodeMap = new Map();
+      state.nodes.forEach(n => nodeMap.set(n.id, n));
+      res.incomingNodes.forEach(n => nodeMap.set(n.id, n));
+      state.nodes = Array.from(nodeMap.values());
+      if (res.incomingVertebrae) VERTEBRAL_LEVELS = res.incomingVertebrae;
+      recordHistory();
+      renderAll();
+      document.getElementById("dataModal").classList.add("hidden");
+      showToast(`Birleştirildi (Toplam: ${state.nodes.length} yapı)`);
+    });
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      const toastIcon = document.getElementById("toastIcon");
+
+      toastMsg.innerText = msg;
+      if (isError) {
+        toastIcon.className = "ph-bold ph-warning-circle text-rose-400";
+        toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-rose-950 border border-rose-800 text-rose-100 px-4 py-2 rounded-xl shadow-2xl text-xs z-50 opacity-100 transition-opacity duration-200 flex items-center gap-2 pointer-events-none";
+      } else {
+        toastIcon.className = "ph-bold ph-check-circle text-emerald-400";
+        toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-700 text-slate-100 px-4 py-2 rounded-xl shadow-2xl text-xs z-50 opacity-100 transition-opacity duration-200 flex items-center gap-2 pointer-events-none";
+      }
+
+      clearTimeout(window._tTimer);
+      window._tTimer = setTimeout(() => { toast.style.opacity = "0"; }, 2400);
+    }
+
+    /* -------------------------------------------------------------
+       18. BAŞLANGIÇ
+       ------------------------------------------------------------- */
+    window.onload = function() {
+      state.nodes = loadFromLocalStorage();
+      loadVertebraLevels();
+
+      state.history = [JSON.stringify({ nodes: state.nodes, vertebrae: VERTEBRAL_LEVELS })];
+      state.historyIndex = 0;
+      updateUndoRedoUI();
+
+      setMode("view");
+      applyTransform();
+      renderAll();
+    };
+  </script>
+</body>
+</html>
