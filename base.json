@@ -1,0 +1,1431 @@
+{
+  "nodes": [
+    {
+      "id": "aorta_ascendens",
+      "label": "Aorta Ascendens",
+      "side": "center",
+      "category": "artery",
+      "roots": "T5 - T4",
+      "location": "Perikard içi çıkış",
+      "notes": "Sol ventrikülden başlar. A. coronaria dextra ve sinistra dallarını verir.",
+      "origins": [],
+      "topo": {
+        "x": 340.38557940714804,
+        "y": 904.3982581510995
+      },
+      "schem": {
+        "x": -706.0646688408337,
+        "y": 543.3063561303929
+      }
+    },
+    {
+      "id": "arcus_aortae",
+      "label": "Arcus Aortae",
+      "side": "center",
+      "category": "artery",
+      "roots": "T4 Seviyesi (Angulus Sterni)",
+      "location": "Mediastinum superius",
+      "notes": "Önden bakışta sağdan sola kavis çizer. Sağda Truncus brachiocephalicus, solda CCA sinistra ve Subclavia sinistra ayrılır.",
+      "origins": [
+        "aorta_ascendens"
+      ],
+      "topo": {
+        "x": 521.235586070226,
+        "y": 764.6614701129766
+      },
+      "schem": {
+        "x": -364.9270616751577,
+        "y": 546.046212711578
+      }
+    },
+    {
+      "id": "aorta_descendens_thoracica",
+      "label": "Aorta Thoracica (Descendens)",
+      "side": "left",
+      "category": "artery",
+      "roots": "T4 - T12 Seviyesi",
+      "location": "Mediastinum posterius",
+      "notes": "T4 alt kenarından başlar, T12'de Hiatus Aorticus'tan geçip karın boşluğuna girer.",
+      "origins": [
+        "arcus_aortae"
+      ],
+      "topo": {
+        "x": 510.01891146298556,
+        "y": 1047.6117553321135
+      },
+      "schem": {
+        "x": 1339.4320284740227,
+        "y": 536.6473934733723
+      }
+    },
+    {
+      "id": "aorta_abd",
+      "label": "Aorta Abdominalis",
+      "side": "center",
+      "category": "artery",
+      "roots": "T12 - L4 Seviyesi",
+      "location": "Retroperitoneal, columna vertebralis önü",
+      "notes": "Hiatus aorticus'tan (T12) başlar, L4 crista iliaca hizasında sonlanır.",
+      "origins": [
+        "aorta_descendens_thoracica"
+      ],
+      "topo": {
+        "x": 530.0189114629856,
+        "y": 1367.6117553321135
+      },
+      "schem": {
+        "x": 1962.0921971953821,
+        "y": 537.3192114952273
+      }
+    },
+    {
+      "id": "truncus_coeliacus",
+      "label": "Truncus Coeliacus",
+      "side": "center",
+      "category": "artery",
+      "roots": "T12 altı / L1",
+      "location": "Aorta ön yüzü (Ön bağırsak arteri)",
+      "notes": "A. gastrica sinistra, A. hepatica communis ve A. splenica dallarına ayrılır.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 1020.168192316296,
+        "y": 1431.8671654666766
+      },
+      "schem": {
+        "x": 2272.950669478595,
+        "y": 355.28586519741003
+      }
+    },
+    {
+      "id": "a_gastrica_sinistra",
+      "label": "A. Gastrica Sinistra",
+      "side": "left",
+      "category": "artery",
+      "roots": "T12/L1 dalı",
+      "location": "Curvatura minor boyu",
+      "notes": "Midenin küçük kurvaturunu besler, A. hepatica propria dalı olan a. gastrica dextra ile anastomoz yapar.",
+      "origins": [
+        "truncus_coeliacus"
+      ],
+      "topo": {
+        "x": 1296.9966967474843,
+        "y": 1461.0641830533114
+      },
+      "schem": {
+        "x": 2020,
+        "y": 100
+      }
+    },
+    {
+      "id": "a_splenica",
+      "label": "A. Splenica (Lienalis)",
+      "side": "left",
+      "category": "artery",
+      "roots": "T12/L1 dalı",
+      "location": "Pankreas üst kenarı boyunca kıvrımlı",
+      "notes": "Dalak, pankreas gövde/kuyruğu ve mide fundusunu besler. A. gastroepiploica sinistra dalını verir.",
+      "origins": [
+        "truncus_coeliacus"
+      ],
+      "topo": {
+        "x": 1249.2718707731642,
+        "y": 1653.644437005515
+      },
+      "schem": {
+        "x": 2540,
+        "y": 100
+      }
+    },
+    {
+      "id": "a_hepatica_communis",
+      "label": "A. Hepatica Communis",
+      "side": "right",
+      "category": "artery",
+      "roots": "T12/L1 dalı",
+      "location": "Lig. hepatoduodenale içinde",
+      "notes": "Sağa yönelir; A. hepatica propria ve A. gastroduodenalis olarak ayrılarak karaciğer, safra kesesi, duodenum ve pankreas başını besler.",
+      "origins": [
+        "truncus_coeliacus"
+      ],
+      "topo": {
+        "x": 985.1248852121066,
+        "y": 1633.7476292808922
+      },
+      "schem": {
+        "x": 2280,
+        "y": 100
+      }
+    },
+    {
+      "id": "v_portae_hepatis",
+      "label": "Vena Portae Hepatis",
+      "side": "right",
+      "category": "vein",
+      "roots": "L2 seviyesi birleşimi",
+      "location": "Caput pancreatis arkası",
+      "notes": "V. splenica ve V. mesenterica superior'un birleşmesiyle kurulur. GIS venöz kanını karaciğer sinüzoidlerine taşır; portokaval anastomoz noktaları klinik önem taşır.",
+      "origins": [],
+      "topo": {
+        "x": -98.49871321161793,
+        "y": 1295.3946054962996
+      },
+      "schem": {
+        "x": 3123.997952093866,
+        "y": -325.7861688418195
+      }
+    },
+    {
+      "id": "truncus_brachiocephalicus",
+      "label": "Truncus Brachiocephalicus",
+      "side": "right",
+      "category": "artery",
+      "roots": "Arcus 1. Dalı",
+      "location": "Art. Sternoclavicularis Dextra arkası",
+      "notes": "Yalnızca sağ tarafta bulunur. Sağ karotis ve sağ subklavyan arterleri ortak gövdeden çıkarır.",
+      "origins": [
+        "arcus_aortae"
+      ],
+      "topo": {
+        "x": 320,
+        "y": 657.928235505344
+      },
+      "schem": {
+        "x": -820,
+        "y": -40
+      }
+    },
+    {
+      "id": "cca_dextra",
+      "label": "A. Carotis Communis Dextra",
+      "side": "right",
+      "category": "artery",
+      "roots": "Truncus dalı / C4",
+      "location": "Sağ Vagina Carotica",
+      "notes": "Trigonum caroticum içinde C4 hizasına kadar yükselir ve bifurkasyona uğrar.",
+      "origins": [
+        "truncus_brachiocephalicus"
+      ],
+      "topo": {
+        "x": 128.56898955456427,
+        "y": 415.55201049666147
+      },
+      "schem": {
+        "x": -1000,
+        "y": -280
+      }
+    },
+    {
+      "id": "a_subclavia_dextra",
+      "label": "A. Subclavia Dextra",
+      "side": "right",
+      "category": "artery",
+      "roots": "Truncus Dalı",
+      "location": "Sağ Spatium Interscalenum",
+      "notes": "Truncus brachiocephalicus'tan ayrılır. 3 parçada incelenir.",
+      "origins": [
+        "truncus_brachiocephalicus"
+      ],
+      "topo": {
+        "x": -100.00644407935279,
+        "y": 538.4835397618465
+      },
+      "schem": {
+        "x": -640,
+        "y": -280
+      }
+    },
+    {
+      "id": "cca_sinistra",
+      "label": "A. Carotis Communis Sinistra",
+      "side": "left",
+      "category": "artery",
+      "roots": "Arcus doğrudan 2. dalı",
+      "location": "Sol Vagina Carotica",
+      "notes": "Doğrudan arkustan çıktığı için sağdakine göre yaklaşık 2.5 cm daha uzundur ve torasik bir parçası bulunur.",
+      "origins": [
+        "arcus_aortae"
+      ],
+      "topo": {
+        "x": 536.8498513666872,
+        "y": 497.64425747838834
+      },
+      "schem": {
+        "x": 2.040366609128597,
+        "y": 130.46915793740766
+      }
+    },
+    {
+      "id": "a_subclavia_sinistra",
+      "label": "A. Subclavia Sinistra",
+      "side": "left",
+      "category": "artery",
+      "roots": "Arcus doğrudan 3. dalı",
+      "location": "Sol Spatium Interscalenum",
+      "notes": "Doğrudan arkustan çıkar. M. scalenus anterior ile ilişkisine göre 3 parçada incelenir.",
+      "origins": [
+        "arcus_aortae"
+      ],
+      "topo": {
+        "x": 1770.019395697876,
+        "y": 745.5956624950503
+      },
+      "schem": {
+        "x": -279.06278872627473,
+        "y": 1159.5352682332627
+      }
+    },
+    {
+      "id": "eca_sinistra",
+      "label": "A. Carotis Externa (ECA)",
+      "side": "left",
+      "category": "artery",
+      "roots": "C4 Seviyesi",
+      "location": "Trigonum caroticum → Parotis",
+      "notes": "Karotis bifurkasyonundan başlar, parotis lojunda terminal dallarına ayrılır. Segmentler açıkken alt ve üst iki fiziksel istasyona ayrışır.",
+      "origins": [
+        "cca_sinistra"
+      ],
+      "topo": {
+        "x": 665.3980434587435,
+        "y": 325.54697744806356
+      },
+      "schem": {
+        "x": 349.39626017098936,
+        "y": -66.27602742341742
+      },
+      "segmentedIds": [
+        "eca_seg_trigonum",
+        "eca_seg_parotid"
+      ]
+    },
+    {
+      "id": "eca_seg_trigonum",
+      "label": "ECA (1. Trigonum Caroticum Segmenti)",
+      "side": "left",
+      "category": "artery",
+      "roots": "C4 - C3 Seviyesi (Boyun Alt Hiza)",
+      "location": "Trigonum caroticum içi (Aşağıda)",
+      "notes": "ECA'nın boyun ön üçgenindeki başlangıç segmentidir. Ön dallar doğrudan bu alt seviyeden ayrılır.",
+      "origins": [
+        "cca_sinistra"
+      ],
+      "topo": {
+        "x": 708.4003749616138,
+        "y": 228.951181355357
+      },
+      "schem": {
+        "x": 302.0403666091286,
+        "y": 90.46915793740766
+      },
+      "isSegmentNode": true,
+      "parentStemId": "eca_sinistra"
+    },
+    {
+      "id": "eca_seg_parotid",
+      "label": "ECA (2. Parotis İçi / Terminal Segment)",
+      "side": "left",
+      "category": "artery",
+      "roots": "C2 - Angulus Mandibulae (Yukarıda)",
+      "location": "Glandula parotidea derinliği (Yukarıda)",
+      "notes": "Trigonum segmentinin yukarıya doğru devamıdır. Aynı damarın üst parçasıdır; terminal dallar buradan ayrılır.",
+      "origins": [
+        "eca_seg_trigonum"
+      ],
+      "isTrunkContinuation": true,
+      "topo": {
+        "x": 720,
+        "y": 60
+      },
+      "schem": {
+        "x": 302.0403666091286,
+        "y": 170.46915793740766
+      },
+      "isSegmentNode": true,
+      "parentStemId": "eca_sinistra"
+    },
+    {
+      "id": "a_thyroidea_superior",
+      "label": "A. Thyroidea Superior",
+      "side": "left",
+      "category": "artery",
+      "roots": "C4 (ECA 1. dalı)",
+      "location": "Trigonum caroticum → Tiroid Üst Kutup",
+      "notes": "ECA'nın ilk dalıdır. Öne-aşağı doğru kıvrılarak tiroid bezinin üst kutbuna ulaşır.",
+      "origins": [
+        "eca_seg_trigonum"
+      ],
+      "topo": {
+        "x": 1079.5379366506309,
+        "y": 530.6841356090086
+      },
+      "schem": {
+        "x": 700,
+        "y": -400
+      }
+    },
+    {
+      "id": "a_lingualis",
+      "label": "A. Lingualis",
+      "side": "left",
+      "category": "artery",
+      "roots": "C3 Seviyesi",
+      "location": "Cornu majus ossis hyoidei üzeri",
+      "notes": "Trigonum caroticum'dan ayrılıp hyoid kemiğin üzerinden dil kaslarının derinliğine girer.",
+      "origins": [
+        "eca_seg_trigonum"
+      ],
+      "topo": {
+        "x": 1081.623121881079,
+        "y": 369.13079398268
+      },
+      "schem": {
+        "x": 697.3632462618756,
+        "y": -245.05547522827413
+      }
+    },
+    {
+      "id": "a_facialis",
+      "label": "A. Facialis",
+      "side": "left",
+      "category": "artery",
+      "roots": "C3 Seviyesi",
+      "location": "Trigonum submandibulare → Yüz",
+      "notes": "Mandibula alt kenarını aşarak yüzde mimik kasları arasında kıvrımlı seyreder.",
+      "origins": [
+        "eca_seg_trigonum"
+      ],
+      "topo": {
+        "x": 1080.6112091056639,
+        "y": 168.98002152350108
+      },
+      "schem": {
+        "x": 695.0600816136277,
+        "y": -93.55507995579251
+      }
+    },
+    {
+      "id": "a_temporalis_superficialis",
+      "label": "A. Temporalis Superficialis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Collum Mandibulae Hizası",
+      "location": "Tragus önü, temporal bölge",
+      "notes": "Parotis bezi içinde ECA'nın yukarı doğru devam eden düz terminal dalıdır.",
+      "origins": [
+        "eca_seg_parotid"
+      ],
+      "topo": {
+        "x": 720.0562482964726,
+        "y": -110.05609454977508
+      },
+      "schem": {
+        "x": 694.7675423203133,
+        "y": 52.653116241398095
+      }
+    },
+    {
+      "id": "a_maxillaris_sinistra",
+      "label": "A. Maxillaris",
+      "side": "left",
+      "category": "artery",
+      "roots": "Collum Mandibulae Hizası",
+      "location": "Fossa Infratemporalis → Fossa Pterygopalatina",
+      "notes": "Dıştan içe (mediale/derine) doğru girer; A. meningea media ve A. sphenopalatina dallarını verir.",
+      "origins": [
+        "eca_seg_parotid"
+      ],
+      "topo": {
+        "x": 1073.5203899094727,
+        "y": 26.35610340331067
+      },
+      "schem": {
+        "x": 693.9373398845788,
+        "y": 202.28785966954723
+      }
+    },
+    {
+      "id": "a_carotis_interna_sinistra",
+      "label": "A. Carotis Interna (ICA)",
+      "side": "left",
+      "category": "artery",
+      "roots": "C4 Seviyesi",
+      "location": "Kafa tabanı → Canalis Caroticus",
+      "notes": "Boyunda hiç dal vermeden dik bir hatla kafa tabanına yükselir ve karotis sifonunu kurar.",
+      "origins": [
+        "cca_sinistra"
+      ],
+      "topo": {
+        "x": 450.49351374154344,
+        "y": 239.00459076535304
+      },
+      "schem": {
+        "x": -160,
+        "y": -80
+      }
+    },
+    {
+      "id": "ijv_sinistra",
+      "label": "V. Jugularis Interna (IJV)",
+      "side": "left",
+      "category": "vein",
+      "roots": "Foramen Jugulare Çıkışı",
+      "location": "Vagina Carotica'da arterin lateralinde",
+      "notes": "CCA ve ICA'nın tam lateralinde seyreder; kranium ve yüzün derin venöz kanını drene eder.",
+      "origins": [],
+      "topo": {
+        "x": 771.2005617548198,
+        "y": 406.81309504642854
+      },
+      "schem": {
+        "x": 3218.630483435706,
+        "y": -259.59451096982974
+      }
+    },
+    {
+      "id": "n_vagus_sinister",
+      "label": "Nervus Vagus (CN X)",
+      "side": "left",
+      "category": "nerve_autonomic",
+      "roots": "Foramen Jugulare",
+      "location": "Vagina Carotica arka oluğu",
+      "notes": "Karotis kılıfının arkasında uzanır; solda Arcus Aortae'nin altından N. Laryngeus Recurrens'i geri döndürür. Toraks ve batın parasempatik uyarımını sağlar.",
+      "origins": [],
+      "topo": {
+        "x": 772.9091111939256,
+        "y": 534.9919221602115
+      },
+      "schem": {
+        "x": 3305.012861864322,
+        "y": -171.88222952607725
+      }
+    },
+    {
+      "id": "brachial_roots",
+      "label": "Plexus Brachialis Kökleri",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C5, C6, C7, C8, T1",
+      "location": "Spatium interscalenum (M. scalenus ant. & med. arası)",
+      "notes": "Spinal sinirlerin ventral ramuslarıdır. A. subclavia ile yakın komşuluk gösterir.",
+      "origins": [],
+      "topo": {
+        "x": 3143.2256667723286,
+        "y": 370.3890366641809
+      },
+      "schem": {
+        "x": -3188.0723420573913,
+        "y": 1890.8337840594809
+      }
+    },
+    {
+      "id": "brachial_trunks",
+      "label": "Trunkuslar (Sup, Med, Inf)",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "Trunkus Seviyesi",
+      "location": "Trigonum supraclaviculare (Klavikula üstü)",
+      "notes": "Truncus Superior (C5-C6), Truncus Medius (C7), Truncus Inferior (C8-T1).",
+      "origins": [
+        "brachial_roots"
+      ],
+      "topo": {
+        "x": 3170.302343714557,
+        "y": 525.9917226467683
+      },
+      "schem": {
+        "x": -2905.5723420573913,
+        "y": 1890.8337840594809
+      }
+    },
+    {
+      "id": "fasciculus_lateralis",
+      "label": "Fasciculus Lateralis",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C5 - C7",
+      "location": "A. axillaris lateralinde",
+      "notes": "N. musculocutaneus'u ve N. medianus'un lateral kökünü oluşturur.",
+      "origins": [
+        "brachial_trunks"
+      ],
+      "topo": {
+        "x": 3314.356988132943,
+        "y": 705.4001987437862
+      },
+      "schem": {
+        "x": -2625.5723420573913,
+        "y": 1810.8337840594809
+      }
+    },
+    {
+      "id": "fasciculus_posterior",
+      "label": "Fasciculus Posterior",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C5 - T1",
+      "location": "A. axillaris arkasında",
+      "notes": "N. radialis ve N. axillaris'i verir. Kol ve ön kol ekstansör hattıdır.",
+      "origins": [
+        "brachial_trunks"
+      ],
+      "topo": {
+        "x": 3442.105090038623,
+        "y": 556.1151382217815
+      },
+      "schem": {
+        "x": -2620.760986234563,
+        "y": 1618.9921800696827
+      }
+    },
+    {
+      "id": "fasciculus_medialis",
+      "label": "Fasciculus Medialis",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C8 - T1",
+      "location": "A. axillaris medialinde",
+      "notes": "N. ulnaris ve N. medianus'un medial kökünü verir.",
+      "origins": [
+        "brachial_trunks"
+      ],
+      "topo": {
+        "x": 3044.542078961759,
+        "y": 728.4881601551527
+      },
+      "schem": {
+        "x": -2625.5723420573913,
+        "y": 1970.8337840594809
+      }
+    },
+    {
+      "id": "n_medianus",
+      "label": "N. Medianus",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C5 - T1",
+      "location": "Ön kol fleksör kompartman & Karpal Tünel",
+      "notes": "Fasciculus lateralis ve medialis'in birleşimiyle oluşur. Ön kol fleksör kaslarını ve tenar bölgeyi uyarır. Karpal tünel sendromunda sıkışır.",
+      "origins": [
+        "fasciculus_lateralis",
+        "fasciculus_medialis"
+      ],
+      "topo": {
+        "x": 3329.876000224372,
+        "y": 870.5521903087962
+      },
+      "schem": {
+        "x": -2325.5723420573913,
+        "y": 1830.8337840594809
+      }
+    },
+    {
+      "id": "n_radialis",
+      "label": "N. Radialis",
+      "side": "left",
+      "category": "nerve_somatic",
+      "roots": "C5 - T1",
+      "location": "Sulcus nervi radialis (Humerus gövdesi)",
+      "notes": "Fasciculus posterior'dan çıkar. Kol ve ön kol ekstansör kaslarını innerve eder; hasarında 'Düşük El' tablosu gelişir.",
+      "origins": [
+        "fasciculus_posterior"
+      ],
+      "topo": {
+        "x": 3624.6068920874245,
+        "y": 742.2778377311705
+      },
+      "schem": {
+        "x": -2320.760986234563,
+        "y": 1678.9921800696827
+      }
+    },
+    {
+      "id": "a_vertebralis",
+      "label": "A. Vertebralis",
+      "side": "left",
+      "category": "artery",
+      "roots": "C6 - C1 Transvers Foramenler",
+      "location": "Foramen Magnum → Kranium",
+      "notes": "Subclavia 1. parçasından çıkar. İki taraf birleşerek A. Basilaris'i kurar.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 1690.019395697876,
+        "y": 526.4353733606906
+      },
+      "schem": {
+        "x": 34.927047345075806,
+        "y": 908.531070500962
+      }
+    },
+    {
+      "id": "a_thoracica_interna",
+      "label": "A. Thoracica Interna (Mammaria)",
+      "side": "left",
+      "category": "artery",
+      "roots": "Subclavia 1. Parça",
+      "location": "Sternum kenarı 1 cm lateralinde aşağı iner",
+      "notes": "A. epigastrica superior ve A. musculophrenica uç dallarını verir. Koroner bypass grefti (LIMA) olarak kullanılır.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 1748.6460955173304,
+        "y": 919.1840971206631
+      },
+      "schem": {
+        "x": 99.84336996968354,
+        "y": 1072.252101063205
+      }
+    },
+    {
+      "id": "truncus_thyrocervicalis",
+      "label": "Truncus Thyrocervicalis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Subclavia 1. Parça",
+      "location": "M. scalenus anterior iç kenarı",
+      "notes": "A. thyroidea inferior, A. transversa cervicis ve A. suprascapularis dallarını verir.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 2133.700420412369,
+        "y": 534.5873229265302
+      },
+      "schem": {
+        "x": 115.08237688580171,
+        "y": 1275.826355755447
+      }
+    },
+    {
+      "id": "truncus_costocervicalis",
+      "label": "Truncus Costocervicalis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Subclavia 2. Parça",
+      "location": "Boyun kökü derinliği",
+      "notes": "A. intercostalis suprema ve A. cervicalis profunda dallarını verir.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 2141.629273009465,
+        "y": 669.8058895221478
+      },
+      "schem": {
+        "x": 14.37990532880724,
+        "y": 1463.2638409701133
+      }
+    },
+    {
+      "id": "a_dorsalis_scapulae",
+      "label": "A. Dorsalis Scapulae",
+      "side": "left",
+      "category": "artery",
+      "roots": "Subclavia 3. Parça",
+      "location": "Plexus brachialis kütükleri arasından skapulaya",
+      "notes": "M. levator scapulae ve rhomboideus kaslarını besler.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 2201.2283075334617,
+        "y": 816.1158040614033
+      },
+      "schem": {
+        "x": -171.0351528246619,
+        "y": 1618.5811884905615
+      }
+    },
+    {
+      "id": "a_axillaris",
+      "label": "A. Axillaris",
+      "side": "left",
+      "category": "artery",
+      "roots": "Costa 1 dış kenarı - M. Teres Major",
+      "location": "Fossa axillaris içi",
+      "notes": "Subclavia devamıdır. M. pectoralis minor ile ilişkisine göre 3 parçada 6 dal verir.",
+      "origins": [
+        "a_subclavia_sinistra"
+      ],
+      "topo": {
+        "x": 2078.860673220943,
+        "y": 1029.5826393087832
+      },
+      "schem": {
+        "x": 397.1552563440472,
+        "y": 1187.2433240794944
+      }
+    },
+    {
+      "id": "a_subscapularis",
+      "label": "A. Subscapularis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Axillaris 3. Parça",
+      "location": "Fossa axillaris arka duvarı",
+      "notes": "Axillaris'in en kalın dalıdır. A. circumflexa scapulae ve A. thoracodorsalis'e ayrılır.",
+      "origins": [
+        "a_axillaris"
+      ],
+      "topo": {
+        "x": 2403.117073582018,
+        "y": 1139.7198688239578
+      },
+      "schem": {
+        "x": 676.9221188524323,
+        "y": 1042.0960131086445
+      }
+    },
+    {
+      "id": "a_brachialis",
+      "label": "A. Brachialis",
+      "side": "left",
+      "category": "artery",
+      "roots": "M. Teres Major altı - Fossa Cubiti",
+      "location": "Sulcus bicipitalis medialis",
+      "notes": "Kolda N. medianus ile seyreder. Tansiyon ölçümünde oskülte edilen ana damardır.",
+      "origins": [
+        "a_axillaris"
+      ],
+      "topo": {
+        "x": 2119.825001730682,
+        "y": 1451.6290952531272
+      },
+      "schem": {
+        "x": 685.1093602919373,
+        "y": 1317.3029799140475
+      }
+    },
+    {
+      "id": "a_profunda_brachii",
+      "label": "A. Profunda Brachii",
+      "side": "left",
+      "category": "artery",
+      "roots": "Brachialis ilk ve en büyük dalı",
+      "location": "Sulcus nervi radialis",
+      "notes": "N. radialis ile birlikte humerus cismini dolanır.",
+      "origins": [
+        "a_brachialis"
+      ],
+      "topo": {
+        "x": 2255.5051565910035,
+        "y": 1317.3365336949798
+      },
+      "schem": {
+        "x": 986.1630505430351,
+        "y": 1184.4365311024544
+      }
+    },
+    {
+      "id": "a_radialis",
+      "label": "A. Radialis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Collum Radii / Fossa Cubiti",
+      "location": "Ön kol lateralinde → Fovea radialis",
+      "notes": "Distalde nabzı en sık palpe edilen arterdir. Derin el kemerinin ana kurucusudur.",
+      "origins": [
+        "a_brachialis"
+      ],
+      "topo": {
+        "x": 1993.0354358542238,
+        "y": 1637.4150663115577
+      },
+      "schem": {
+        "x": 986.9817746869855,
+        "y": 1363.502152520463
+      }
+    },
+    {
+      "id": "a_ulnaris",
+      "label": "A. Ulnaris",
+      "side": "left",
+      "category": "artery",
+      "roots": "Collum Radii / Fossa Cubiti",
+      "location": "Ön kol medialinde → Guyon Kanalı",
+      "notes": "A. interossea communis dalını verir. Yüzeyel el kemerinin ana kurucusudur.",
+      "origins": [
+        "a_brachialis"
+      ],
+      "topo": {
+        "x": 2298.4374084285073,
+        "y": 1642.2367088602498
+      },
+      "schem": {
+        "x": 1009.0873265736486,
+        "y": 1576.1354638404412
+      }
+    },
+    {
+      "id": "arcus_palmaris_superficialis",
+      "label": "Arcus Palmaris Superficialis",
+      "side": "left",
+      "category": "artery",
+      "roots": "A. Ulnaris ağırlıklı anastomoz",
+      "location": "Aponeurosis palmaris hemen altı",
+      "notes": "A. ulnaris gövdesi ile A. radialis'in r. palmaris superficialis dalının birleşimidir.",
+      "origins": [
+        "a_ulnaris",
+        "a_radialis"
+      ],
+      "topo": {
+        "x": 2303.760848386213,
+        "y": 1900.8491155580757
+      },
+      "schem": {
+        "x": 1366.5154997037562,
+        "y": 1417.8885665663831
+      }
+    },
+    {
+      "id": "arcus_palmaris_profundus",
+      "label": "Arcus Palmaris Profundus",
+      "side": "left",
+      "category": "artery",
+      "roots": "A. Radialis ağırlıklı anastomoz",
+      "location": "Metakarp kemikleri tabanı üzeri",
+      "notes": "A. radialis gövdesi ile A. ulnaris'in r. palmaris profundus dalının birleşimidir.",
+      "origins": [
+        "a_radialis",
+        "a_ulnaris"
+      ],
+      "topo": {
+        "x": 2047.7512622048066,
+        "y": 1894.5613470906312
+      },
+      "schem": {
+        "x": 1364.8780514158555,
+        "y": 1557.6554290747683
+      }
+    },
+    {
+      "id": "aa_intercostales_posteriores",
+      "label": "Aa. Intercostales Posteriores (3-11)",
+      "side": "left",
+      "category": "artery",
+      "roots": "T4 - T11 Segmental (Paryetal)",
+      "location": "Sulcus costae içi",
+      "notes": "Göğüs kafesi duvarını ve interkostal kasları besler.",
+      "origins": [
+        "aorta_descendens_thoracica"
+      ],
+      "topo": {
+        "x": 54.96912545676028,
+        "y": 1056.662314812422
+      },
+      "schem": {
+        "x": 1164.4058304761816,
+        "y": 290.74129414864524
+      }
+    },
+    {
+      "id": "rami_bronchiales",
+      "label": "Rami Bronchiales (Sol 1-2)",
+      "side": "left",
+      "category": "artery",
+      "roots": "T5 - T6 Seviyesi (Viseral)",
+      "location": "Akciğer hilumu boyu",
+      "notes": "Akciğer parankiminin nutrisyonel arterleridir.",
+      "origins": [
+        "aorta_descendens_thoracica"
+      ],
+      "topo": {
+        "x": 860.822074976316,
+        "y": 935.320748267558
+      },
+      "schem": {
+        "x": 1416.9466062288855,
+        "y": 290.6658760648635
+      }
+    },
+    {
+      "id": "rami_oesophageales",
+      "label": "Rami Oesophageales",
+      "side": "center",
+      "category": "artery",
+      "roots": "T5 - T8 Seviyesi (Viseral)",
+      "location": "Mediastinum posterius",
+      "notes": "Özofagusun torasik segmentini besler.",
+      "origins": [
+        "aorta_descendens_thoracica"
+      ],
+      "topo": {
+        "x": 866.6700097983487,
+        "y": 1082.1370350722677
+      },
+      "schem": {
+        "x": 1668.0111100138254,
+        "y": 288.23610751153217
+      }
+    },
+    {
+      "id": "aa_phrenicae_inferiores",
+      "label": "Aa. Phrenicae Inferiores",
+      "side": "center",
+      "category": "artery",
+      "roots": "T12 (Paryetal)",
+      "location": "Diaphragma alt yüzü",
+      "notes": "Diyafram alt yüzünü besler; A. suprarenalis superior dallarını verir.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 146.6271721748547,
+        "y": 1215.6561399037741
+      },
+      "schem": {
+        "x": 1741.5251097034873,
+        "y": 1062.247770655577
+      }
+    },
+    {
+      "id": "aa_lumbales",
+      "label": "Aa. Lumbales (4 Çift)",
+      "side": "center",
+      "category": "artery",
+      "roots": "L1 - L4 Segmental (Paryetal)",
+      "location": "Vertebra gövdeleri arkası",
+      "notes": "Bel duvarı kaslarını ve omurgayı besler.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": -54.790040221951244,
+        "y": 1424.7066993840826
+      },
+      "schem": {
+        "x": 1636.2138833152844,
+        "y": 903.4754359045926
+      }
+    },
+    {
+      "id": "a_sacralis_mediana",
+      "label": "A. Sacralis Mediana",
+      "side": "center",
+      "category": "artery",
+      "roots": "L4 Aorta Çatalı (Paryetal)",
+      "location": "Os sacrum ve coccyx ön yüzü",
+      "notes": "Aorta bifurkasyonunun tam ortasından ayrılan tekil daldır.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 749.6812257978632,
+        "y": 1509.62345112355
+      },
+      "schem": {
+        "x": 1596.4092729757583,
+        "y": 749.362971690539
+      }
+    },
+    {
+      "id": "a_mesenterica_superior",
+      "label": "A. Mesenterica Superior (SMA)",
+      "side": "center",
+      "category": "artery",
+      "roots": "L1 Seviyesi (Orta bağırsak)",
+      "location": "Pankreas gövdesi altından çıkar",
+      "notes": "Duodenum alt yarısından flexura coli sinistra'ya kadar orta bağırsağı besler.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 103.94403908512675,
+        "y": 1693.61098185803
+      },
+      "schem": {
+        "x": 1960,
+        "y": 1220
+      }
+    },
+    {
+      "id": "a_mesenterica_inferior",
+      "label": "A. Mesenterica Inferior (IMA)",
+      "side": "left",
+      "category": "artery",
+      "roots": "L3 Seviyesi (Son bağırsak)",
+      "location": "Aorta sol ön yüzü",
+      "notes": "Colon descendens, sigmoideum ve rektum üst kısmını besler.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 687.8413731763432,
+        "y": 1230.6630882865052
+      },
+      "schem": {
+        "x": 2420,
+        "y": 880
+      }
+    },
+    {
+      "id": "aa_renales",
+      "label": "Aa. Renales (Sağ ve Sol)",
+      "side": "center",
+      "category": "artery",
+      "roots": "L1 - L2 Seviyesi",
+      "location": "Hilum renale girişi",
+      "notes": "Sağ renal arter VCI arkasından geçtiği için daha uzundur.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 1013.8316820226308,
+        "y": 1261.5433525504677
+      },
+      "schem": {
+        "x": 2320,
+        "y": 1000
+      }
+    },
+    {
+      "id": "aa_testiculares_ovaricae",
+      "label": "Aa. Testiculares / Ovaricae",
+      "side": "center",
+      "category": "artery",
+      "roots": "L2 Seviyesi (Gonadal)",
+      "location": "M. psoas major üzeri",
+      "notes": "Pelvise veya canalis inguinalis'e uzanan uzun gonadal arterlerdir.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 40.406022790635035,
+        "y": 1566.3836575651626
+      },
+      "schem": {
+        "x": 2180,
+        "y": 1120
+      }
+    },
+    {
+      "id": "a_iliaca_communis_sinistra",
+      "label": "A. Iliaca Communis Sinistra",
+      "side": "left",
+      "category": "artery",
+      "roots": "L4 Bifurkasyon",
+      "location": "Art. Sacroiliaca önüne doğru",
+      "notes": "L5-S1 hizasında interna ve externa kollarına ayrılır.",
+      "origins": [
+        "aorta_abd"
+      ],
+      "topo": {
+        "x": 1004.8277483327548,
+        "y": 1999.9197224134684
+      },
+      "schem": {
+        "x": 2482.092197195382,
+        "y": 537.3192114952273
+      }
+    },
+    {
+      "id": "a_iliaca_interna_sinistra",
+      "label": "A. Iliaca Interna (Hypogastrica)",
+      "side": "left",
+      "category": "artery",
+      "roots": "L5 - S1 Eklem Seviyesi",
+      "location": "Pelvis minor içi",
+      "notes": "Pelvis organlarını ve gluteal bölgeyi besler.",
+      "origins": [
+        "a_iliaca_communis_sinistra"
+      ],
+      "topo": {
+        "x": 1358.301026592283,
+        "y": 2207.8477213447213
+      },
+      "schem": {
+        "x": 2980,
+        "y": 200
+      }
+    },
+    {
+      "id": "a_glutea_superior",
+      "label": "A. Glutea Superior",
+      "side": "left",
+      "category": "artery",
+      "roots": "Iliaca interna arka kütük",
+      "location": "Foramen Suprapiriforme çıkışı",
+      "notes": "Iliaca interna'nın en kalın dalıdır. M. gluteus medius ve minimus'u besler.",
+      "origins": [
+        "a_iliaca_interna_sinistra"
+      ],
+      "topo": {
+        "x": 1644.7657289423914,
+        "y": 2189.154116283557
+      },
+      "schem": {
+        "x": 3240,
+        "y": 60
+      }
+    },
+    {
+      "id": "a_glutea_inferior",
+      "label": "A. Glutea Inferior",
+      "side": "left",
+      "category": "artery",
+      "roots": "Iliaca interna ön kütük",
+      "location": "Foramen Infrapiriforme çıkışı",
+      "notes": "N. ischiadicus ile birlikte infrapiriform aralıktan çıkar.",
+      "origins": [
+        "a_iliaca_interna_sinistra"
+      ],
+      "topo": {
+        "x": 1623.965789631989,
+        "y": 2361.3105565437377
+      },
+      "schem": {
+        "x": 3240,
+        "y": 180
+      }
+    },
+    {
+      "id": "a_obturatoria",
+      "label": "A. Obturatoria",
+      "side": "left",
+      "category": "artery",
+      "roots": "Iliaca interna ön kütük",
+      "location": "Canalis obturatorius içi",
+      "notes": "Uyluk adduktör lojuna geçer. Corona Mortis anastomozuna katılabilir.",
+      "origins": [
+        "a_iliaca_interna_sinistra"
+      ],
+      "topo": {
+        "x": 1527.8345822013803,
+        "y": 2555.161897339805
+      },
+      "schem": {
+        "x": 3240,
+        "y": 320
+      }
+    },
+    {
+      "id": "a_iliaca_externa_sinistra",
+      "label": "A. Iliaca Externa Sinistra",
+      "side": "left",
+      "category": "artery",
+      "roots": "L5 - S1 Çatallanması",
+      "location": "Lacuna Vasorum'a doğru",
+      "notes": "Ligamentum inguinale altından geçtiği anda A. Femoralis adını alır.",
+      "origins": [
+        "a_iliaca_communis_sinistra"
+      ],
+      "topo": {
+        "x": 907.2299779913287,
+        "y": 2240.806451439167
+      },
+      "schem": {
+        "x": 2954.3049382990716,
+        "y": 809.484809482052
+      }
+    },
+    {
+      "id": "a_femoralis",
+      "label": "A. Femoralis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Lig. Inguinale (Lacuna Vasorum)",
+      "location": "Trigonum Femorale → Canalis Adductorius",
+      "notes": "Alt ekstremitenin ana arteridir.",
+      "origins": [
+        "a_iliaca_externa_sinistra"
+      ],
+      "topo": {
+        "x": 907.2299779913287,
+        "y": 2480.8064514391667
+      },
+      "schem": {
+        "x": 3216.022676675676,
+        "y": 810.9668322743295
+      }
+    },
+    {
+      "id": "a_profunda_femoris",
+      "label": "A. Profunda Femoris",
+      "side": "left",
+      "category": "artery",
+      "roots": "Femoralis ana dalı",
+      "location": "Trigonum femorale derinliği",
+      "notes": "Uyluğun ana besleyicisidir. Aa. circumflexa femoris dallarını verir.",
+      "origins": [
+        "a_femoralis"
+      ],
+      "topo": {
+        "x": 1185.3386169538373,
+        "y": 2640.68547739811
+      },
+      "schem": {
+        "x": 3352.4457705718714,
+        "y": 639.8722475017009
+      }
+    },
+    {
+      "id": "a_poplitea",
+      "label": "A. Poplitea",
+      "side": "left",
+      "category": "artery",
+      "roots": "Hiatus Adductorius (Hunter Kanalı Çıkışı)",
+      "location": "Fossa poplitea derin tabanı",
+      "notes": "M. popliteus alt kenarında tibialis anterior ve posterior'a ayrılır.",
+      "origins": [
+        "a_femoralis"
+      ],
+      "topo": {
+        "x": 907.2299779913287,
+        "y": 2800.8064514391667
+      },
+      "schem": {
+        "x": 3482.7522008314963,
+        "y": 816.7196294496846
+      }
+    },
+    {
+      "id": "a_tibialis_anterior",
+      "label": "A. Tibialis Anterior",
+      "side": "left",
+      "category": "artery",
+      "roots": "M. Popliteus alt kenarı",
+      "location": "Bacak ön kompartmanı",
+      "notes": "Ayak bileği önünde A. Dorsalis Pedis adını alır.",
+      "origins": [
+        "a_poplitea"
+      ],
+      "topo": {
+        "x": 847.2299779913287,
+        "y": 3080.8064514391667
+      },
+      "schem": {
+        "x": 3799.5995827794804,
+        "y": 604.6483176965905
+      }
+    },
+    {
+      "id": "a_tibialis_posterior",
+      "label": "A. Tibialis Posterior",
+      "side": "left",
+      "category": "artery",
+      "roots": "M. Popliteus alt kenarı",
+      "location": "Bacak fleksör kompartmanı → Tarsal Tünel",
+      "notes": "Malleolus medialis arkasından ayak tabanına geçer.",
+      "origins": [
+        "a_poplitea"
+      ],
+      "topo": {
+        "x": 1203.6346012674794,
+        "y": 3206.845380423413
+      },
+      "schem": {
+        "x": 3797.093689889872,
+        "y": 909.2962370145908
+      }
+    },
+    {
+      "id": "a_fibularis",
+      "label": "A. Fibularis (Peronealis)",
+      "side": "left",
+      "category": "artery",
+      "roots": "Tibialis posterior dalı",
+      "location": "Fibula boyunca lateral loj",
+      "notes": "M. flexor hallucis longus derinliğinde seyreder.",
+      "origins": [
+        "a_tibialis_posterior"
+      ],
+      "topo": {
+        "x": 1540.819370216889,
+        "y": 3283.749329919024
+      },
+      "schem": {
+        "x": 3971.9876178769255,
+        "y": 1098.767369644346
+      }
+    },
+    {
+      "id": "a_dorsalis_pedis",
+      "label": "A. Dorsalis Pedis",
+      "side": "left",
+      "category": "artery",
+      "roots": "Retinaculum Extensorum İnferius altı",
+      "location": "Ayak sırtı",
+      "notes": "Ayak sırtı nabız arteridir. Derin dalı tabandaki arkusa katılır.",
+      "origins": [
+        "a_tibialis_anterior"
+      ],
+      "topo": {
+        "x": 847.2299779913287,
+        "y": 3360.8064514391667
+      },
+      "schem": {
+        "x": 4063.8703571625583,
+        "y": 713.3312958133416
+      }
+    },
+    {
+      "id": "arcus_plantaris_profundus",
+      "label": "Arcus Plantaris Profundus",
+      "side": "left",
+      "category": "artery",
+      "roots": "A. Plantaris Lateralis + A. Dorsalis Pedis Derin Dalı",
+      "location": "Ayak tabanı derinliği",
+      "notes": "A. tibialis posterior ve dorsalis pedis anastomozudur.",
+      "origins": [
+        "a_tibialis_posterior",
+        "a_dorsalis_pedis"
+      ],
+      "topo": {
+        "x": 1041.645146955247,
+        "y": 3595.092256195826
+      },
+      "schem": {
+        "x": 4242.893630182094,
+        "y": 894.3551659106724
+      }
+    }
+  ],
+  "vertebrae": [
+    {
+      "id": "c1_c2",
+      "label": "C1 - C2 (Atlas / Axis)",
+      "y": 160,
+      "desc": "A. Vertebralis Foramen Magnum Girişi"
+    },
+    {
+      "id": "c4",
+      "label": "C4 (Cartilago Thyroidea)",
+      "y": 360,
+      "desc": "A. Carotis Communis Bifurkasyonu"
+    },
+    {
+      "id": "c6",
+      "label": "C6 (Cartilago Cricoidea)",
+      "y": 540,
+      "desc": "A. Vertebralis Foramen Transversarium Seviyesi"
+    },
+    {
+      "id": "t4_t5",
+      "label": "T4 - T5 (Angulus Sterni)",
+      "y": 800,
+      "desc": "Arcus Aortae Başlangıç ve Bitişi"
+    },
+    {
+      "id": "t12",
+      "label": "T12 (Hiatus Aorticus)",
+      "y": 1160,
+      "desc": "Aorta Abdominalis Başlangıcı"
+    },
+    {
+      "id": "l1",
+      "label": "L1 (Planum Transpyloricum)",
+      "y": 1340,
+      "desc": "A. Mesenterica Superior Çıkışı"
+    },
+    {
+      "id": "l4",
+      "label": "L4 (Crista Iliaca)",
+      "y": 1560,
+      "desc": "Aorta Bifurkasyonu"
+    }
+  ]
+}
