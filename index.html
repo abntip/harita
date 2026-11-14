@@ -47,21 +47,6 @@
       outline: 2px solid #fb7185 !important;
       outline-offset: 2px;
     }
-    .foramen-ring {
-      fill: #090d16;
-      stroke: #94a3b8;
-      stroke-width: 2.2;
-      stroke-dasharray: 3 2;
-      filter: drop-shadow(0 0 4px rgba(148, 163, 184, 0.5));
-    }
-    .foramen-label {
-      fill: #cbd5e1;
-      font-size: 9px;
-      font-family: ui-monospace, monospace;
-      font-weight: 600;
-      text-anchor: middle;
-      dominant-baseline: central;
-    }
     @keyframes dashMove {
       to { stroke-dashoffset: -20; }
     }
@@ -85,7 +70,8 @@
       <div>
         <h1 class="text-xs md:text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
           Topografik Anatomi Atlası
-          <span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.2 rounded font-mono">v4.0</span>
+          <span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.2 rounded font-mono">v5.0</span>
+          <span id="envBadge" class="hidden text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-mono uppercase">LOCAL DEV</span>
         </h1>
         <p class="text-[10px] text-slate-400 hidden sm:block">Segmental Vasküler Gövde ve Vertebra Hizalama Motoru</p>
       </div>
@@ -181,31 +167,26 @@
 
     <!-- Right: Anatomik Katman Toggle'ları -->
     <div class="flex items-center gap-1.5 sm:gap-2">
-      <!-- Segmentleri Aç/Kapat -->
-      <button id="toggleSegmentsBtn" class="px-2.5 py-1 rounded-lg border border-amber-600/60 bg-amber-950/60 text-amber-300 hover:text-white flex items-center gap-1.5 text-[11px] font-medium transition shadow-sm" title="ECA ve Maxillaris gibi gövdeleri fiziksel segment düğümlerine böler">
+      <button id="toggleSegmentsBtn" class="px-2.5 py-1 rounded-lg border border-amber-600/60 bg-amber-950/60 text-amber-300 hover:text-white flex items-center gap-1.5 text-[11px] font-medium transition shadow-sm" title="Gövde segmentlerini bağımsız istasyonlara böler">
         <i class="ph-bold ph-git-fork"></i>
         <span>Segment Gövdeleri</span>
       </button>
 
-      <!-- Komşuluklar (SADECE TOPOGRAFİKTE) -->
       <button id="toggleRelationsBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-purple-950/40 text-purple-300 hover:text-white flex items-center gap-1 text-[11px] transition">
         <i class="ph-bold ph-git-diff"></i>
         <span class="hidden md:inline">Komşuluklar</span>
       </button>
 
-      <!-- Vertebralar (SADECE TOPOGRAFİKTE) -->
       <button id="toggleAlignmentBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-sky-950/40 text-sky-300 hover:text-white flex items-center gap-1 text-[11px] transition">
         <i class="ph-bold ph-ruler"></i>
         <span class="hidden md:inline">Vertebralar</span>
       </button>
 
-      <!-- Vertebra Taşı Aracı -->
       <button id="btnVertebraMoveTool" class="px-2 py-1 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1 text-[11px] transition">
         <i class="ph-bold ph-arrows-down-up"></i>
         <span class="hidden lg:inline">Vertebra Taşı</span>
       </button>
 
-      <!-- Kompakt Görünüm -->
       <button id="toggleCompactBtn" class="px-2 py-1 rounded-lg border border-slate-700 bg-slate-800 text-emerald-300 hover:text-white flex items-center gap-1 text-[11px] transition">
         <i class="ph-bold ph-rows"></i>
         <span class="hidden lg:inline">Kompakt</span>
@@ -235,11 +216,10 @@
   <div id="viewport" class="relative flex-1 w-full h-full overflow-hidden bg-slate-950 bg-grid cursor-grab active:cursor-grabbing select-none">
     
     <div id="world" class="absolute origin-top-left will-change-transform" style="transform: translate(0px, 0px) scale(1);">
-      
       <!-- 1. EN ARKA KATMAN: VERTEBRALAR & AXIS MEDIANUM (z-0) -->
       <div id="alignmentBackgroundLayer" class="absolute left-0 top-0 pointer-events-auto z-0"></div>
 
-      <!-- 2. ORTA KATMAN: SVG BAĞLANTILARI, GEÇİTLER, KALIN GÖVDE OKLARI (z-10) -->
+      <!-- 2. ORTA KATMAN: SVG BAĞLANTILARI, KALIN GÖVDE OKLARI (z-10) -->
       <svg id="connectionsSvg" class="absolute overflow-visible pointer-events-none z-10" style="left: 0; top: 0; width: 1px; height: 1px;">
         <defs>
           <marker id="arrow-artery" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -254,20 +234,15 @@
           <marker id="arrow-nerve" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#facc15" />
           </marker>
-          <marker id="arrow-lineage" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#f43f5e" />
-          </marker>
         </defs>
 
         <g id="svgMainTrunksGroup"></g>
         <g id="svgPathsGroup"></g>
-        <g id="svgForaminaRingsGroup"></g>
         <g id="svgRelationsGroup"></g>
       </svg>
 
       <!-- 3. EN ÜST KATMAN: ANATOMİK DÜĞÜMLER (z-20) -->
       <div id="nodesContainer" class="absolute left-0 top-0 z-20 pointer-events-auto"></div>
-
     </div>
 
     <!-- Floating Zoom Controls -->
@@ -442,28 +417,87 @@
   </div>
 
   <!-- ================= DATA MANAGEMENT MODAL ================= -->
-  <div id="dataModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-sm text-white">Harita Veri Yönetimi</h3>
-        <button id="closeDataModalBtn" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-base"></i></button>
-      </div>
-      <div class="space-y-3">
-        <button id="exportJsonBtn" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium text-xs">
-          Mevcut Haritayı JSON Olarak İndir
+  <div id="dataModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full flex flex-col shadow-2xl overflow-hidden max-h-[92vh]">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <i class="ph-bold ph-database text-rose-400"></i> Harita Veri Yönetimi & Aktarım
+        </h3>
+        <button id="closeDataModalBtn" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="ph-bold ph-x text-base"></i>
         </button>
-        <div>
-          <label class="block text-slate-400 text-xs mb-1">JSON Kodunu Yapıştırın:</label>
-          <textarea id="importPasteTextarea" rows="6" class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200"></textarea>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        
+        <!-- Dışa Aktarma & GitHub Senkronizasyonu -->
+        <div class="bg-slate-850 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-200">Haritayı Dışa Aktar (base-map.json)</h4>
+              <p class="text-slate-400 text-[11px]">İndirdiğiniz dosyayı <code class="text-rose-300">base-map.json</code> adıyla GitHub'a yükleyebilirsiniz.</p>
+            </div>
+            <button id="exportJsonBtn" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium flex items-center gap-1.5 transition shrink-0">
+              <i class="ph-bold ph-download-simple"></i> JSON İndir
+            </button>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-200">Ana Haritaya Sıfırla / Güncelle</h4>
+              <p class="text-slate-400 text-[11px]">Yerel değişiklikleri temizler ve sunucudaki güncel <code class="text-emerald-300">base-map.json</code> dosyasını çeker.</p>
+            </div>
+            <button id="syncBaseMapBtn" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-1.5 transition shrink-0">
+              <i class="ph-bold ph-arrows-clockwise"></i> Ana Haritayı Çek
+            </button>
+          </div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="parseReplaceBtn" class="w-full py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg text-xs font-medium">
-            Tamamen Değiştir (Replace)
+
+        <!-- İçe Aktarma Alanı -->
+        <div class="bg-slate-850 p-3.5 rounded-xl border border-slate-800 space-y-3">
+          <div>
+            <h4 class="font-bold text-slate-200">İçe Aktarma (JSON Yapıştır)</h4>
+            <p class="text-slate-400 text-[11px]">Yorum satırları ve fazladan virgüller otomatik temizlenir; varsa hata satırı gösterilir.</p>
+          </div>
+
+          <textarea id="importPasteTextarea" rows="5" placeholder='{"nodes": [...], "vertebrae": [...]} veya [{"id": ...}]'
+                    class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200 font-mono text-[11px] focus:outline-none focus:border-rose-500 leading-relaxed"></textarea>
+          
+          <button id="parseValidateBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg font-medium text-xs flex items-center justify-center gap-1.5 transition">
+            <i class="ph-bold ph-magnifying-glass"></i> Metni Çözümle & Doğrula (Diff İncele)
           </button>
-          <button id="parseMergeBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-medium">
-            Mevcutla Birleştir (Merge)
-          </button>
+
+          <!-- Hata Gösterim Kutusu -->
+          <div id="importErrorBox" class="hidden p-3 bg-rose-950/80 border border-rose-700/80 rounded-lg text-rose-200 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-[11px]">
+              <i class="ph-bold ph-warning-octagon text-sm text-rose-400"></i> Sözdizimi Hatası Bulundu
+            </div>
+            <div id="importErrorMsg" class="text-[11px] font-mono whitespace-pre-wrap leading-relaxed"></div>
+          </div>
+
+          <!-- Karşılaştırma / Diff Önizleme Paneli -->
+          <div id="importDiffBox" class="hidden p-3.5 bg-slate-900 border border-slate-700 rounded-lg space-y-3">
+            <div class="font-bold text-slate-200 text-xs flex items-center justify-between">
+              <span>Veri Karşılaştırma Özeti:</span>
+              <span class="text-[10px] text-slate-400 font-normal">Geçerli JSON</span>
+            </div>
+
+            <div id="importDiffSummary" class="grid grid-cols-2 gap-2 text-[11px]"></div>
+
+            <div class="pt-2 border-t border-slate-800 space-y-1.5">
+              <span class="block text-[11px] font-bold text-slate-300">İçe Aktarma Yöntemi Seçin:</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="btnImportReplace" class="py-2 px-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg font-medium text-xs transition text-center shadow">
+                  Tamamen Değiştir (Replace)
+                </button>
+                <button id="btnImportMerge" class="py-2 px-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium text-xs transition text-center shadow">
+                  Mevcutla Birleştir (Merge)
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -487,9 +521,7 @@
 
   <!-- ================= JAVASCRIPT MOTORU ================= -->
   <script>
-    /* -------------------------------------------------------------
-       1. VERTEBRA HİZALARI
-       ------------------------------------------------------------- */
+    /* 1. VERTEBRA DÜZEYLERİ (Varsayılan Yedek) */
     let VERTEBRAL_LEVELS = [
       { id: "c1_c2", label: "C1 - C2 (Atlas / Axis)", y: 160, desc: "A. Vertebralis Foramen Magnum Girişi" },
       { id: "c4", label: "C4 (Cartilago Thyroidea)", y: 360, desc: "A. Carotis Communis Bifurkasyonu" },
@@ -500,10 +532,8 @@
       { id: "l4", label: "L4 (Crista Iliaca)", y: 1560, desc: "Aorta Bifurkasyonu" }
     ];
 
-    /* -------------------------------------------------------------
-       2. BAŞLANGIÇ TEMİZ TOPOGRAFİK VERİ SETİ
-       ------------------------------------------------------------- */
-    const DEFAULT_DATASET = [
+    /* 2. MİNİMAL ÇEVRİMDIŞI YEDEK VERİ (Sadece base-map.json yoksa devreye girer) */
+    const FALLBACK_MINIMAL_DATASET = [
       {
         id: "aorta_ascendens",
         label: "Aorta Ascendens",
@@ -511,7 +541,7 @@
         category: "artery",
         roots: "T5 - T4",
         location: "Perikard içi çıkış",
-        notes: "Sol ventrikülden başlar, yukarı-sağa doğru çapraz yükselerek T4'te Arcus Aortae'ye devam eder.",
+        notes: "Sol ventrikülden başlar. (base-map.json bulunamadığı için minimal yedek görünüm yüklendi).",
         origins: [],
         topo: { x: 420, y: 920 },
         schem: { x: 60, y: 380 }
@@ -521,222 +551,12 @@
         label: "Arcus Aortae",
         side: "center",
         category: "artery",
-        roots: "T4 Seviyesi (Angulus Sterni)",
+        roots: "T4 Seviyesi",
         location: "Mediastinum superius",
-        notes: "Önden bakışta sağdan sola kavis çizer. Sağda Truncus brachiocephalicus, solda doğrudan CCA sinistra ve Subclavia sinistra ayrılır.",
+        notes: "Veri menüsünden base-map.json dosyanızı içe aktarabilirsiniz.",
         origins: ["aorta_ascendens"],
         topo: { x: 440, y: 780 },
         schem: { x: 340, y: 380 }
-      },
-      {
-        id: "aorta_descendens_thoracica",
-        label: "Aorta Thoracica (Descendens)",
-        side: "left",
-        category: "artery",
-        roots: "T4 - T12 Seviyesi",
-        location: "Mediastinum posterius",
-        notes: "T4 alt kenarından başlar, aşağı inerek T12'de Hiatus Aorticus'tan geçer.",
-        origins: ["arcus_aortae"],
-        topo: { x: 460, y: 1100 },
-        schem: { x: 620, y: 560 }
-      },
-      {
-        id: "truncus_brachiocephalicus",
-        label: "Truncus Brachiocephalicus",
-        side: "right",
-        category: "artery",
-        roots: "Arcus 1. Dalı",
-        location: "Art. Sternoclavicularis Dextra arkası",
-        notes: "Yalnızca sağ tarafta bulunur! Sağ karotis ve subklavyanı ortak bir gövdeden çıkarır.",
-        origins: ["arcus_aortae"],
-        topo: { x: 260, y: 680 },
-        schem: { x: 620, y: 180 }
-      },
-      {
-        id: "cca_dextra",
-        label: "A. Carotis Communis Dextra",
-        side: "right",
-        category: "artery",
-        roots: "Truncus dalı / C4",
-        location: "Sağ Vagina Carotica",
-        notes: "Trigonum caroticum içinde C4 hizasına kadar yükselir.",
-        origins: ["truncus_brachiocephalicus"],
-        topo: { x: 240, y: 500 },
-        schem: { x: 920, y: 120 }
-      },
-      {
-        id: "a_subclavia_dextra",
-        label: "A. Subclavia Dextra",
-        side: "right",
-        category: "artery",
-        roots: "Truncus dalı",
-        location: "Sağ Spatium Interscalenum",
-        notes: "M. scalenus anterior arkasından sağ kola yönelir.",
-        origins: ["truncus_brachiocephalicus"],
-        topo: { x: 80, y: 620 },
-        schem: { x: 920, y: 260 }
-      },
-      {
-        id: "cca_sinistra",
-        label: "A. Carotis Communis Sinistra",
-        side: "left",
-        category: "artery",
-        roots: "Arcus doğrudan 2. dalı",
-        location: "Sol Vagina Carotica",
-        notes: "Doğrudan arkustan çıktığı için sağdakine göre 2.5 cm daha uzundur.",
-        origins: ["arcus_aortae"],
-        topo: { x: 580, y: 500 },
-        schem: { x: 620, y: 380 }
-      },
-      {
-        id: "a_subclavia_sinistra",
-        label: "A. Subclavia Sinistra",
-        side: "left",
-        category: "artery",
-        roots: "Arcus doğrudan 3. dalı",
-        location: "Sol Spatium Interscalenum",
-        notes: "Mediastinum superius derinliğinden kavisle sol kola geçer.",
-        origins: ["arcus_aortae"],
-        topo: { x: 740, y: 620 },
-        schem: { x: 620, y: 480 }
-      },
-      {
-        id: "eca_sinistra",
-        label: "A. Carotis Externa (ECA)",
-        side: "left",
-        category: "artery",
-        roots: "C4 Seviyesi",
-        location: "Trigonum caroticum → Parotis",
-        notes: "Karotis bifurkasyonundan başlar, parotis lojunda terminal dallarına ayrılır.",
-        origins: ["cca_sinistra"],
-        topo: { x: 660, y: 360 },
-        schem: { x: 920, y: 380 },
-        segmentedIds: ["eca_seg_trigonum", "eca_seg_parotid"]
-      },
-      {
-        id: "eca_seg_trigonum",
-        label: "ECA (1. Trigonum Caroticum Segmenti)",
-        side: "left",
-        category: "artery",
-        roots: "C4 - C3 Seviyesi (Boyun Alt Hiza)",
-        location: "Trigonum caroticum içi (Aşağıda)",
-        notes: "ECA'nın boyun ön üçgenindeki başlangıç segmentidir. Ön dallar buradan ayrılır.",
-        origins: ["cca_sinistra"],
-        topo: { x: 660, y: 410 },
-        schem: { x: 920, y: 340 },
-        isSegmentNode: true,
-        parentStemId: "eca_sinistra"
-      },
-      {
-        id: "eca_seg_parotid",
-        label: "ECA (2. Parotis İçi / Terminal Segment)",
-        side: "left",
-        category: "artery",
-        roots: "C2 - Angulus Mandibulae (Yukarıda)",
-        location: "Glandula parotidea derinliği (Yukarıda)",
-        notes: "Trigonum segmentinin yukarıya doğru devamıdır. Terminal dallar buradan ayrılır.",
-        origins: ["eca_seg_trigonum"],
-        isTrunkContinuation: true,
-        topo: { x: 660, y: 270 },
-        schem: { x: 920, y: 420 },
-        isSegmentNode: true,
-        parentStemId: "eca_sinistra"
-      },
-      {
-        id: "a_thyroidea_superior",
-        label: "A. Thyroidea Superior",
-        side: "left",
-        category: "artery",
-        roots: "C4 (ECA 1. dalı)",
-        location: "Trigonum caroticum → Tiroid Üst Kutup",
-        notes: "ECA'nın ilk dalıdır. Öne-aşağı doğru kıvrılarak tiroid bezinin üst kutbuna ulaşır.",
-        origins: ["eca_seg_trigonum"],
-        topo: { x: 840, y: 450 },
-        schem: { x: 1220, y: 280 }
-      },
-      {
-        id: "a_lingualis",
-        label: "A. Lingualis",
-        side: "left",
-        category: "artery",
-        roots: "C3 Seviyesi",
-        location: "Cornu majus ossis hyoidei üzeri",
-        notes: "Trigonum caroticum'dan ayrılıp hyoid kemiğin üzerinden dil kaslarına girer.",
-        origins: ["eca_seg_trigonum"],
-        topo: { x: 840, y: 390 },
-        schem: { x: 1220, y: 340 }
-      },
-      {
-        id: "a_facialis",
-        label: "A. Facialis",
-        side: "left",
-        category: "artery",
-        roots: "C3 Seviyesi",
-        location: "Trigonum submandibulare → Yüz",
-        notes: "Mandibula alt kenarını aşarak yüze geçer.",
-        origins: ["eca_seg_trigonum"],
-        topo: { x: 840, y: 330 },
-        schem: { x: 1220, y: 400 }
-      },
-      {
-        id: "a_temporalis_superficialis",
-        label: "A. Temporalis Superficialis",
-        side: "left",
-        category: "artery",
-        roots: "Collum Mandibulae Hizası",
-        location: "Tragus önü, temporal bölge",
-        notes: "Parotis bezi içinde ECA'nın yukarı devam eden terminal dalıdır.",
-        origins: ["eca_seg_parotid"],
-        topo: { x: 840, y: 190 },
-        schem: { x: 1220, y: 460 }
-      },
-      {
-        id: "a_maxillaris_sinistra",
-        label: "A. Maxillaris",
-        side: "left",
-        category: "artery",
-        roots: "Collum Mandibulae Hizası",
-        location: "Fossa Infratemporalis → Fossa Pterygopalatina",
-        notes: "Dıştan içe (mediale/derine) doğru girer.",
-        origins: ["eca_seg_parotid"],
-        topo: { x: 840, y: 260 },
-        schem: { x: 1220, y: 520 }
-      },
-      {
-        id: "a_carotis_interna_sinistra",
-        label: "A. Carotis Interna (ICA)",
-        side: "left",
-        category: "artery",
-        roots: "C4 Seviyesi",
-        location: "Kafa tabanı → Canalis Caroticus",
-        notes: "Boyunda dal vermeden kafa tabanına yükselir.",
-        origins: ["cca_sinistra"],
-        topo: { x: 540, y: 240 },
-        schem: { x: 920, y: 580 }
-      },
-      {
-        id: "ijv_sinistra",
-        label: "V. Jugularis Interna (IJV)",
-        side: "left",
-        category: "vein",
-        roots: "Foramen Jugulare Çıkışı",
-        location: "Vagina Carotica'da arterin lateralinde",
-        notes: "CCA ve ICA'nın lateralinde seyreder.",
-        origins: [],
-        topo: { x: 740, y: 420 },
-        schem: { x: 920, y: 680 }
-      },
-      {
-        id: "n_vagus_sinister",
-        label: "Nervus Vagus (CN X)",
-        side: "left",
-        category: "nerve_autonomic",
-        roots: "Foramen Jugulare",
-        location: "Vagina Carotica arka oluğu",
-        notes: "Karotis kılıfının arkasında uzanır.",
-        origins: [],
-        topo: { x: 620, y: 440 },
-        schem: { x: 920, y: 780 }
       }
     ];
 
@@ -746,9 +566,9 @@
       { id: "rel_3", source: "n_vagus_sinister", target: "arcus_aortae", label: "N. Laryngeus Recurrens Arkusu Çaprazlar" }
     ];
 
-    /* -------------------------------------------------------------
-       3. UYGULAMA DURUMU (STATE)
-       ------------------------------------------------------------- */
+    /* 3. UYGULAMA DURUMU & ORTAM TESPİTİ */
+    const IS_LOCAL_ENV = ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+
     let state = {
       nodes: [],
       layout: "topographic",
@@ -789,10 +609,10 @@
     const nodesContainer = document.getElementById("nodesContainer");
     const svgPathsGroup = document.getElementById("svgPathsGroup");
     const svgMainTrunksGroup = document.getElementById("svgMainTrunksGroup");
-    const svgForaminaRingsGroup = document.getElementById("svgForaminaRingsGroup");
     const svgRelationsGroup = document.getElementById("svgRelationsGroup");
     const alignmentBackgroundLayer = document.getElementById("alignmentBackgroundLayer");
     const topographicCompass = document.getElementById("topographicCompass");
+    const envBadge = document.getElementById("envBadge");
 
     const layoutTopographicBtn = document.getElementById("layoutTopographicBtn");
     const layoutSchematicBtn = document.getElementById("layoutSchematicBtn");
@@ -838,13 +658,27 @@
     const clearSearchBtn = document.getElementById("clearSearchBtn");
     const searchDropdown = document.getElementById("searchDropdown");
 
+    const dataModal = document.getElementById("dataModal");
+    const openDataModalBtn = document.getElementById("openDataModalBtn");
+    const closeDataModalBtn = document.getElementById("closeDataModalBtn");
+    const exportJsonBtn = document.getElementById("exportJsonBtn");
+    const syncBaseMapBtn = document.getElementById("syncBaseMapBtn");
+    const importPasteTextarea = document.getElementById("importPasteTextarea");
+    const parseValidateBtn = document.getElementById("parseValidateBtn");
+    const importErrorBox = document.getElementById("importErrorBox");
+    const importErrorMsg = document.getElementById("importErrorMsg");
+    const importDiffBox = document.getElementById("importDiffBox");
+    const importDiffSummary = document.getElementById("importDiffSummary");
+    const btnImportReplace = document.getElementById("btnImportReplace");
+    const btnImportMerge = document.getElementById("btnImportMerge");
+
+    let pendingImportPayload = null;
+
     viewport.addEventListener("contextmenu", e => e.preventDefault());
 
-    /* -------------------------------------------------------------
-       4. LOCAL STORAGE YÖNETİMİ
-       ------------------------------------------------------------- */
-    const STORAGE_KEY = "topographic_anatomy_data_v4";
-    const VERTEBRA_KEY = "vertebra_levels_data_v4";
+    /* 4. LOCAL STORAGE & EXTERNAL BASE-MAP.JSON YÜKLEYİCİ */
+    const STORAGE_KEY = "topographic_anatomy_data_v5";
+    const VERTEBRA_KEY = "vertebra_levels_data_v5";
 
     function saveToLocalStorage() {
       try {
@@ -855,30 +689,77 @@
       }
     }
 
-    function loadFromLocalStorage() {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    async function fetchExternalBaseMap() {
+      const response = await fetch("./base-map.json?t=" + Date.now());
+      if (!response.ok) throw new Error("base-map.json HTTP " + response.status);
+      const baseData = await response.json();
+
+      if (Array.isArray(baseData)) {
+        state.nodes = baseData;
+      } else if (baseData && Array.isArray(baseData.nodes)) {
+        state.nodes = baseData.nodes;
+        if (Array.isArray(baseData.vertebrae) && baseData.vertebrae.length > 0) {
+          VERTEBRAL_LEVELS = baseData.vertebrae;
         }
-      } catch (e) {}
-      return JSON.parse(JSON.stringify(DEFAULT_DATASET));
+      }
+      saveToLocalStorage();
     }
 
-    function loadVertebraLevels() {
+    async function initializeMapData() {
+      if (IS_LOCAL_ENV) {
+        envBadge.classList.remove("hidden");
+      }
+
+      // 1. Kullanıcının kendi tarayıcısında kayıtlı düzenlemesi varsa onu yükle
       try {
-        const stored = localStorage.getItem(VERTEBRA_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) VERTEBRAL_LEVELS = parsed;
+        const storedNodes = localStorage.getItem(STORAGE_KEY);
+        const storedVertebrae = localStorage.getItem(VERTEBRA_KEY);
+
+        if (storedNodes) {
+          const parsedNodes = JSON.parse(storedNodes);
+          if (Array.isArray(parsedNodes) && parsedNodes.length > 0) {
+            state.nodes = parsedNodes;
+            if (storedVertebrae) {
+              const parsedVerts = JSON.parse(storedVertebrae);
+              if (Array.isArray(parsedVerts) && parsedVerts.length > 0) {
+                VERTEBRAL_LEVELS = parsedVerts;
+              }
+            }
+            return;
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn("LocalStorage okuma hatası:", e);
+      }
+
+      // 2. İlk kez giren ziyaretçi: GitHub / sunucudaki base-map.json dosyasını çek
+      try {
+        await fetchExternalBaseMap();
+        return;
+      } catch (err) {
+        console.warn("Harici base-map.json yüklenemedi, yedek veri kullanılıyor:", err);
+      }
+
+      // 3. Tamamen çevrimdışı veya sunucusuz açılış (file://) yedeği
+      state.nodes = JSON.parse(JSON.stringify(FALLBACK_MINIMAL_DATASET));
     }
 
-    /* -------------------------------------------------------------
-       5. TARİHÇE (UNDO / REDO)
-       ------------------------------------------------------------- */
+    syncBaseMapBtn.addEventListener("click", async () => {
+      if (!confirm("Yerel değişiklikleriniz silinecek ve sunucudaki en güncel base-map.json haritası yüklenecek. Onaylıyor musunuz?")) return;
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(VERTEBRA_KEY);
+        await fetchExternalBaseMap();
+        recordHistory();
+        renderAll();
+        dataModal.classList.add("hidden");
+        showToast(`Güncel ana harita yüklendi (${state.nodes.length} yapı)`);
+      } catch (err) {
+        showToast("base-map.json dosyasına ulaşılamadı! Sunucu/GitHub Pages üzerinden açtığınızdan emin olun.", true);
+      }
+    });
+
+    /* 5. TARİHÇE */
     function recordHistory() {
       if (state.historyIndex < state.history.length - 1) {
         state.history = state.history.slice(0, state.historyIndex + 1);
@@ -924,9 +805,7 @@
       redoBtn.disabled = state.historyIndex >= state.history.length - 1;
     }
 
-    /* -------------------------------------------------------------
-       6. ZOOM & PAN MATRİSİ
-       ------------------------------------------------------------- */
+    /* 6. ZOOM & PAN */
     function applyTransform() {
       world.style.transform = `translate(${state.transform.x}px, ${state.transform.y}px) scale(${state.transform.k})`;
       zoomResetFloatingBtn.innerText = `${Math.round(state.transform.k * 100)}%`;
@@ -977,9 +856,7 @@
       showToast(`Odaklandı: ${node.label}`);
     }
 
-    /* -------------------------------------------------------------
-       7. DAL TAŞIMA (SUBTREE) KİLİTLEME YARDIMCILARI
-       ------------------------------------------------------------- */
+    /* 7. SUBTREE KİLİTLEME */
     function getAllDescendantIds(rootNodeId) {
       const descendants = new Set();
       function traverse(currentId) {
@@ -1016,9 +893,7 @@
       renderAll();
     }
 
-    /* -------------------------------------------------------------
-       8. AKTİF DÜĞÜM FİLTRESİ (SEGMENTAL AYRIŞMA MANTIĞI)
-       ------------------------------------------------------------- */
+    /* 8. AKTİF DÜĞÜM FİLTRESİ */
     function getNodePos(node) {
       if (state.layout === "topographic") {
         return node.topo || { x: node.x || 100, y: node.y || 100 };
@@ -1034,19 +909,15 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       9. ÇİZİM: VERTEBRA VE AXIS MEDIANUM
-       ------------------------------------------------------------- */
+    /* 9. ÇİZİM: VERTEBRA VE MİDSTERNAL EKSEN */
     function renderVertebralAndMedianBackground() {
       if (!state.showAlignment || state.layout !== "topographic") {
         alignmentBackgroundLayer.innerHTML = "";
         return;
       }
 
-      let html = "";
-
-      html += `
-        <div class="absolute top-[-200px] h-[2200px] pointer-events-none flex flex-col items-center" style="left: 500px; width: 2px;">
+      let html = `
+        <div class="absolute top-[-200px] h-[3400px] pointer-events-none flex flex-col items-center" style="left: 500px; width: 2px;">
           <div class="w-px h-full bg-rose-500/30 border-l border-dashed border-rose-500/50"></div>
           <div class="absolute top-10 -translate-x-1/2 bg-rose-950/80 border border-rose-800/80 px-2 py-0.5 rounded text-[9px] font-mono text-rose-300 whitespace-nowrap shadow-md tracking-wider uppercase">
             Axis Medianum (Midsternal Hat)
@@ -1076,9 +947,7 @@
       alignmentBackgroundLayer.innerHTML = html;
     }
 
-    /* -------------------------------------------------------------
-       10. ÇİZİM: SVG DALLANMALARI VE GÖVDE DEVAM OKLARI
-       ------------------------------------------------------------- */
+    /* 10. ÇİZİM: SVG DALLANMALARI VE GÖVDE OKLARI */
     function renderSvgLayers() {
       const visibleNodes = getVisibleNodes();
       const nodeMap = new Map();
@@ -1193,9 +1062,7 @@
       svgRelationsGroup.innerHTML = relationsHtml;
     }
 
-    /* -------------------------------------------------------------
-       11. ÇİZİM: ANATOMİK DÜĞÜMLER
-       ------------------------------------------------------------- */
+    /* 11. ÇİZİM: ANATOMİK DÜĞÜMLER */
     function renderNodes() {
       let html = "";
       const CARD_W = state.compactView ? 160 : 230;
@@ -1290,9 +1157,7 @@
       renderNodes();
     }
 
-    /* -------------------------------------------------------------
-       12. ETKİLEŞİM MOTORU: DÜĞÜM VE VERTEBRA TAŞIMA
-       ------------------------------------------------------------- */
+    /* 12. ETKİLEŞİM MOTORU */
     let activePointers = new Map();
     let pinchStartDistance = null;
     let pinchStartScale = null;
@@ -1521,9 +1386,7 @@
       }
     });
 
-    /* -------------------------------------------------------------
-       13. VERTEBRA Y-EKSENİ TAŞIMA ARACI
-       ------------------------------------------------------------- */
+    /* 13. VERTEBRA ARACI */
     btnVertebraMoveTool.addEventListener("click", () => {
       if (state.layout !== "topographic") {
         showToast("Vertebra taşıma sadece Topografik Modda çalışır!", true);
@@ -1564,9 +1427,7 @@
       showToast("Vertebra konumları kaydedildi");
     });
 
-    /* -------------------------------------------------------------
-       14. DETAY PANELİ & DÜZENLEME MODALI
-       ------------------------------------------------------------- */
+    /* 14. DETAY PANELİ & DÜZENLEME MODALI */
     function selectNode(id, openDrawer = false) {
       state.selectedNodeId = id;
       renderAll();
@@ -1722,9 +1583,7 @@
 
     addNewNodeBtn.addEventListener("click", () => openEditModal(null));
 
-    /* -------------------------------------------------------------
-       15. KATMAN & MOD BUTONLARI
-       ------------------------------------------------------------- */
+    /* 15. MOD VE DÜZEN BUTONLARI */
     function setMode(newMode) {
       state.mode = newMode;
       clearSubtreeSelection();
@@ -1787,9 +1646,7 @@
       toggleSegmentsBtn.classList.toggle("bg-amber-950/60", state.showSegments);
       toggleSegmentsBtn.classList.toggle("border-amber-600/60", state.showSegments);
       renderAll();
-      showToast(state.showSegments 
-        ? "Segment Gövdeleri Açık" 
-        : "Segment Gövdeleri Kapalı");
+      showToast(state.showSegments ? "Segment Gövdeleri Açık" : "Segment Gövdeleri Kapalı");
     });
 
     toggleRelationsBtn.addEventListener("click", () => {
@@ -1822,9 +1679,7 @@
       showToast(state.autoSubtreeMove ? "Tüm dalı taşıma açık" : "Tekli taşıma açık");
     });
 
-    /* -------------------------------------------------------------
-       16. ARAMA VE ZOOM BUTONLARI
-       ------------------------------------------------------------- */
+    /* 16. ARAMA & ZOOM */
     searchInput.addEventListener("input", (e) => {
       const q = e.target.value.toLowerCase().trim();
       if (!q) {
@@ -1916,77 +1771,172 @@
       }
     });
 
-    /* -------------------------------------------------------------
-       17. AKILLI JSON İÇE AKTARMA (REPLACE & MERGE)
-       ------------------------------------------------------------- */
-    document.getElementById("openDataModalBtn").addEventListener("click", () => {
-      document.getElementById("dataModal").classList.remove("hidden");
+    /* 17. GELİŞMİŞ VE TOLERANSLI IMPORT / DIFF / EXPORT MOTORU */
+    openDataModalBtn.addEventListener("click", () => {
+      importDiffBox.classList.add("hidden");
+      importErrorBox.classList.add("hidden");
+      pendingImportPayload = null;
+      dataModal.classList.remove("hidden");
     });
-    document.getElementById("closeDataModalBtn").addEventListener("click", () => {
-      document.getElementById("dataModal").classList.add("hidden");
-    });
+    closeDataModalBtn.addEventListener("click", () => dataModal.classList.add("hidden"));
 
-    document.getElementById("exportJsonBtn").addEventListener("click", () => {
+    exportJsonBtn.addEventListener("click", () => {
       const exportObj = { nodes: state.nodes, vertebrae: VERTEBRAL_LEVELS };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
       const dl = document.createElement("a");
       dl.setAttribute("href", dataStr);
-      dl.setAttribute("download", `topografik_anatomi_${new Date().toISOString().slice(0, 10)}.json`);
+      dl.setAttribute("download", "base-map.json");
       document.body.appendChild(dl);
       dl.click();
       dl.remove();
-      showToast("Yedek JSON indirildi");
+      showToast("base-map.json indirildi");
     });
 
-    function parseImportInput() {
-      const raw = document.getElementById("importPasteTextarea").value.trim();
-      if (!raw) {
-        showToast("Lütfen JSON metni yapıştırın!", true);
-        return null;
-      }
-      try {
-        const parsed = JSON.parse(raw);
-        let incomingNodes = [];
-        let incomingVertebrae = null;
+    function cleanJsonString(raw) {
+      return raw
+        .replace(/(^|[^\\:])\/\/.*$/gm, '$1')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/,\s*([\]}])/g, '$1')
+        .trim();
+    }
 
-        if (Array.isArray(parsed)) {
-          incomingNodes = parsed;
-        } else if (parsed.nodes && Array.isArray(parsed.nodes)) {
-          incomingNodes = parsed.nodes;
-          if (parsed.vertebrae) incomingVertebrae = parsed.vertebrae;
-        }
-        return { incomingNodes, incomingVertebrae };
+    function parseWithDetailedError(cleanedStr) {
+      try {
+        return { success: true, data: JSON.parse(cleanedStr) };
       } catch (err) {
-        showToast("Geçersiz JSON formatı!", true);
-        return null;
+        let line = 1, col = 1, snippet = "";
+        const posMatch = err.message.match(/position\s+(\d+)/i);
+
+        if (posMatch && posMatch[1]) {
+          const charIndex = parseInt(posMatch[1], 10);
+          const upToError = cleanedStr.substring(0, charIndex);
+          const lines = upToError.split("\n");
+          line = lines.length;
+          col = lines[lines.length - 1].length + 1;
+
+          const start = Math.max(0, charIndex - 30);
+          const end = Math.min(cleanedStr.length, charIndex + 30);
+          snippet = "..." + cleanedStr.substring(start, end).replace(/\n/g, '↵') + "...";
+        }
+
+        return { success: false, error: err.message, line, col, snippet };
       }
     }
 
-    // Tamamen Değiştir (Replace)
-    document.getElementById("parseReplaceBtn").addEventListener("click", () => {
-      const res = parseImportInput();
-      if (!res) return;
-      state.nodes = res.incomingNodes;
-      if (res.incomingVertebrae) VERTEBRAL_LEVELS = res.incomingVertebrae;
-      recordHistory();
-      renderAll();
-      document.getElementById("dataModal").classList.add("hidden");
-      showToast(`Harita güncellendi (${state.nodes.length} yapı)`);
+    parseValidateBtn.addEventListener("click", () => {
+      importErrorBox.classList.add("hidden");
+      importDiffBox.classList.add("hidden");
+      pendingImportPayload = null;
+
+      const raw = importPasteTextarea.value.trim();
+      if (!raw) {
+        showToast("Lütfen JSON metni yapıştırın!", true);
+        return;
+      }
+
+      const cleaned = cleanJsonString(raw);
+      const parseResult = parseWithDetailedError(cleaned);
+
+      if (!parseResult.success) {
+        importErrorBox.classList.remove("hidden");
+        importErrorMsg.innerHTML = `
+<strong>Hata Açıklaması:</strong> ${parseResult.error}
+<strong>Yaklaşık Konum:</strong> Satır ${parseResult.line}, Sütun ${parseResult.col}
+${parseResult.snippet ? `<strong>Hatalı Bölge Civarı:</strong>\n<span class="bg-rose-900/60 px-1 py-0.5 rounded text-rose-300 font-mono">${parseResult.snippet}</span>` : ''}
+        `;
+        showToast("JSON formatında hata var! Satırı kontrol edin.", true);
+        return;
+      }
+
+      let incomingNodes = [];
+      let incomingVertebrae = null;
+      const data = parseResult.data;
+
+      if (Array.isArray(data)) {
+        incomingNodes = data;
+      } else if (data && typeof data === "object") {
+        if (Array.isArray(data.nodes)) incomingNodes = data.nodes;
+        if (Array.isArray(data.vertebrae)) incomingVertebrae = data.vertebrae;
+      }
+
+      if (incomingNodes.length === 0) {
+        importErrorBox.classList.remove("hidden");
+        importErrorMsg.innerText = "Hata: Geçerli bir düğüm dizisi (nodes array) bulunamadı!";
+        return;
+      }
+
+      const currentIds = new Set(state.nodes.map(n => n.id));
+      const incomingIds = new Set(incomingNodes.map(n => n.id));
+
+      let overlapCount = 0;
+      let newCount = 0;
+      let removedCount = 0;
+
+      incomingNodes.forEach(n => {
+        if (currentIds.has(n.id)) overlapCount++;
+        else newCount++;
+      });
+
+      state.nodes.forEach(n => {
+        if (!incomingIds.has(n.id)) removedCount++;
+      });
+
+      pendingImportPayload = { incomingNodes, incomingVertebrae };
+
+      importDiffSummary.innerHTML = `
+        <div class="p-2 bg-slate-950 rounded border border-slate-800">
+          <span class="text-slate-400 block text-[10px]">Gelen Toplam Yapı:</span>
+          <strong class="text-white text-sm">${incomingNodes.length}</strong>
+        </div>
+        <div class="p-2 bg-slate-950 rounded border border-slate-800">
+          <span class="text-slate-400 block text-[10px]">Mevcut Haritadaki Yapı:</span>
+          <strong class="text-white text-sm">${state.nodes.length}</strong>
+        </div>
+        <div class="p-2 bg-slate-950 rounded border border-amber-900/40">
+          <span class="text-amber-400 block text-[10px]">Çakışan / Güncellenecek:</span>
+          <strong class="text-amber-300 text-sm">${overlapCount}</strong>
+        </div>
+        <div class="p-2 bg-slate-950 rounded border border-emerald-900/40">
+          <span class="text-emerald-400 block text-[10px]">Tamamen Yeni Yapı:</span>
+          <strong class="text-emerald-300 text-sm">+${newCount}</strong>
+        </div>
+      `;
+
+      if (removedCount > 0) {
+        importDiffSummary.innerHTML += `
+          <div class="col-span-2 p-2 bg-slate-950 rounded border border-rose-900/40 text-rose-300 text-[10.5px]">
+            <i class="ph-bold ph-info"></i> Replace edilirse mevcuttaki <strong>${removedCount} yapı</strong> silinecek. (Merge edilirse korunurlar).
+          </div>
+        `;
+      }
+
+      importDiffBox.classList.remove("hidden");
+      showToast("JSON başarıyla doğrulandı, yöntem seçin");
     });
 
-    // Akıllı Birleştir (Merge)
-    document.getElementById("parseMergeBtn").addEventListener("click", () => {
-      const res = parseImportInput();
-      if (!res) return;
-      const nodeMap = new Map();
-      state.nodes.forEach(n => nodeMap.set(n.id, n));
-      res.incomingNodes.forEach(n => nodeMap.set(n.id, n));
-      state.nodes = Array.from(nodeMap.values());
-      if (res.incomingVertebrae) VERTEBRAL_LEVELS = res.incomingVertebrae;
+    btnImportReplace.addEventListener("click", () => {
+      if (!pendingImportPayload) return;
+      state.nodes = pendingImportPayload.incomingNodes;
+      if (pendingImportPayload.incomingVertebrae) VERTEBRAL_LEVELS = pendingImportPayload.incomingVertebrae;
       recordHistory();
       renderAll();
-      document.getElementById("dataModal").classList.add("hidden");
-      showToast(`Birleştirildi (Toplam: ${state.nodes.length} yapı)`);
+      dataModal.classList.add("hidden");
+      showToast(`Harita tamamen değiştirildi (${state.nodes.length} yapı)`);
+    });
+
+    btnImportMerge.addEventListener("click", () => {
+      if (!pendingImportPayload) return;
+      const nodeMap = new Map();
+      state.nodes.forEach(n => nodeMap.set(n.id, n));
+      pendingImportPayload.incomingNodes.forEach(n => nodeMap.set(n.id, n));
+
+      state.nodes = Array.from(nodeMap.values());
+      if (pendingImportPayload.incomingVertebrae) VERTEBRAL_LEVELS = pendingImportPayload.incomingVertebrae;
+      
+      recordHistory();
+      renderAll();
+      dataModal.classList.add("hidden");
+      showToast(`Mevcutla birleştirildi (Toplam: ${state.nodes.length} yapı)`);
     });
 
     function showToast(msg, isError = false) {
@@ -2004,15 +1954,12 @@
       }
 
       clearTimeout(window._tTimer);
-      window._tTimer = setTimeout(() => { toast.style.opacity = "0"; }, 2400);
+      window._tTimer = setTimeout(() => { toast.style.opacity = "0"; }, 2500);
     }
 
-    /* -------------------------------------------------------------
-       18. BAŞLANGIÇ
-       ------------------------------------------------------------- */
-    window.onload = function() {
-      state.nodes = loadFromLocalStorage();
-      loadVertebraLevels();
+    /* 18. ASENKRON BAŞLATICI */
+    window.onload = async function() {
+      await initializeMapData();
 
       state.history = [JSON.stringify({ nodes: state.nodes, vertebrae: VERTEBRAL_LEVELS })];
       state.historyIndex = 0;
